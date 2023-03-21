@@ -1,91 +1,124 @@
-# Mysql
+## MySQL DB Terraform Module
 
 
+<br>
 
-## Getting started
+## Usage Example
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+```hcl
+module "mysql" {
+  source                   = "../.."
+  mysqldb_backup_enabled   = false
+  mysqldb_exporter_enabled = false
+  cluster_name             = "cluster-name"
+  mysqldb_config = {
+    name                        = "skaf"
+    environment                 = "prod"
+    architecture                = "replication"
+    custom_user_username        = "admin"
+    primary_pod_volume_size     = "10Gi"
+    secondary_pod_replica_count = 1
+    secondary_pod_volume_size   = "10Gi"
+    storage_class_name          = "infra-service-sc"
+    values_yaml = file("./helm/values.yaml")
+  }
+  mysqldb_backup_config = {
+    s3_bucket_uri         = "s3://bucketname"
+    s3_bucket_region      = "bucket-region"
+    cron_for_full_backup  = "* * * * *"
+  }
+}
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/sq-ia/kubernetes/mysql.git
-git branch -M main
-git push -uf origin main
-```
+Refer [examples](https://github.com/sq-ia/terraform-kubernetes-mysql/tree/main/examples/complete) for more details.
 
-## Integrate with your tools
+## IAM Permissions
+The required IAM permissions to create resources from this module can be found [here](https://github.com/sq-ia/terraform-kubernetes-mysql/blob/main/IAM.md)
 
-- [ ] [Set up project integrations](https://gitlab.com/sq-ia/kubernetes/mysql/-/settings/integrations)
+## Important Notes
+  1. In order to enable the exporter, it is required to deploy Prometheus/Grafana first.
+  2. The exporter is a tool that extracts metrics data from an application or system and makes it available to be scraped by Prometheus.
+  3. Prometheus is a monitoring system that collects metrics data from various sources, including exporters, and stores it in a time-series database.
+  4. Grafana is a data visualization and dashboard tool that works with Prometheus and other data sources to display the collected metrics in a user-friendly way.
+  5. To deploy Prometheus/Grafana, please follow the installation instructions for each tool in their respective documentation.
+  6. Once Prometheus and Grafana are deployed, the exporter can be configured to scrape metrics data from your application or system and send it to Prometheus.
+  7. Finally, you can use Grafana to create custom dashboards and visualize the metrics data collected by Prometheus.
+  8. This module is compatible with EKS version 1.23, which is great news for users deploying the module on an EKS cluster running that version. Review the module's documentation, meet specific configuration requirements, and test thoroughly after deployment to ensure everything works as expected.
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
 
-## Collaborate with your team
+No requirements.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## Providers
 
-## Test and Deploy
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | n/a |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | n/a |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
-Use the built-in continuous integration in GitLab.
+## Modules
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+No modules.
 
-***
+## Resources
 
-# Editing this README
+| Name | Type |
+|------|------|
+| [aws_iam_role.mysql_backup_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_secretsmanager_secret.mysql_user_password](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret) | resource |
+| [aws_secretsmanager_secret_version.mysql_user_password](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version) | resource |
+| [helm_release.mysqldb](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.mysqldb_backup](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [kubernetes_namespace.mysqldb](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
+| [random_password.mysqldb_custom_user_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [random_password.mysqldb_exporter_user_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [random_password.mysqldb_replication_user_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [random_password.mysqldb_root_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_eks_cluster.kubernetes_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## Inputs
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_app_version"></a> [app\_version](#input\_app\_version) | App version | `string` | `"8.0.29-debian-11-r9"` | no |
+| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | Chart version | `string` | `"9.2.0"` | no |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the EKS cluster | `string` | `""` | no |
+| <a name="input_mysqldb_backup_config"></a> [mysqldb\_backup\_config](#input\_mysqldb\_backup\_config) | Mysql Backup configurations | `any` | <pre>{<br>  "cron_for_full_backup": "*/5 * * * *",<br>  "s3_bucket_region": "us-east-2",<br>  "s3_bucket_uri": "s3://mysqlbackupp"<br>}</pre> | no |
+| <a name="input_mysqldb_backup_enabled"></a> [mysqldb\_backup\_enabled](#input\_mysqldb\_backup\_enabled) | Set true to enable mysql backups | `bool` | `false` | no |
+| <a name="input_mysqldb_config"></a> [mysqldb\_config](#input\_mysqldb\_config) | Mysql configurations | `any` | <pre>{<br>  "architecture": "",<br>  "custom_user_username": "",<br>  "environment": "",<br>  "name": "",<br>  "primary_pod_volume_size": "",<br>  "secondary_pod_replica_count": 1,<br>  "secondary_pod_volume_size": "",<br>  "storage_class_name": "",<br>  "values_yaml": ""<br>}</pre> | no |
+| <a name="input_mysqldb_exporter_enabled"></a> [mysqldb\_exporter\_enabled](#input\_mysqldb\_exporter\_enabled) | Set true to deploy mysqldb exporters to get metrics in grafana | `bool` | `false` | no |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace name | `string` | `"mysqldb"` | no |
+| <a name="input_recovery_window_aws_secret"></a> [recovery\_window\_aws\_secret](#input\_recovery\_window\_aws\_secret) | Number of days that AWS Secrets Manager waits before it can delete the secret. This value can be 0 to force deletion without recovery or range from 7 to 30 days. | `number` | `0` | no |
 
-## Name
-Choose a self-explaining name for your project.
+## Outputs
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+| Name | Description |
+|------|-------------|
+| <a name="output_mysql_port"></a> [mysql\_port](#output\_mysql\_port) | n/a |
+| <a name="output_mysql_primary_endpoint"></a> [mysql\_primary\_endpoint](#output\_mysql\_primary\_endpoint) | n/a |
+| <a name="output_mysql_primary_headless_endpoint"></a> [mysql\_primary\_headless\_endpoint](#output\_mysql\_primary\_headless\_endpoint) | n/a |
+| <a name="output_mysql_secondary_endpoint"></a> [mysql\_secondary\_endpoint](#output\_mysql\_secondary\_endpoint) | n/a |
+| <a name="output_mysql_secondary_headless_endpoint"></a> [mysql\_secondary\_headless\_endpoint](#output\_mysql\_secondary\_headless\_endpoint) | n/a |
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+##           
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
 
-For open source projects, say how it is licensed.
+Please give our GitHub repository a ⭐️ to show your support and increase its visibility.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+
+
+
+

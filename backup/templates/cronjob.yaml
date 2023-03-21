@@ -1,0 +1,52 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-mysqldb
+spec:
+  schedule: {{ .Values.backup.cron_for_full_backup |  quote }}
+  concurrencyPolicy: Forbid
+  suspend: false
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          imagePullSecrets:
+          - name: regcred
+          serviceAccountName: sa-mysql-backup
+          containers:
+          - name: backup-mysqldb
+            image: saturnops01/mysqlbackup:latest
+            env:
+            - name: MYSQL_HOST
+              value: mysqldb-secondary-headless.{{ .Release.Namespace }}.svc.cluster.local
+            - name: MYSQL_USER
+              value: {{ .Values.auth.username }}
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                    name: mysqldb
+                    key: mysql-root-password
+            - name: MYSQL_BUCKET_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-bucket-uri
+                  key: MYSQL_BUCKET_URI
+            - name: AWS_DEFAULT_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: aws-mysql
+                  key: AWS_DEFAULT_REGION
+            # - name: AWS_ACCESS_KEY_ID
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: aws-key
+            #       key: AWS_ACCESS_KEY_ID
+            # - name: AWS_SECRET_ACCESS_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: aws-secret
+            #       key: AWS_SECRET_ACCESS_KEY
