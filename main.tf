@@ -54,6 +54,7 @@ EOF
 }
 
 resource "kubernetes_namespace" "mysqldb" {
+  count = var.create_namespace ? 1 : 0
   metadata {
     annotations = {}
 
