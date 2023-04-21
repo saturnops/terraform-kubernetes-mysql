@@ -1,15 +1,15 @@
 variable "mysqldb_config" {
   type = any
   default = {
-    name                        = ""
-    environment                 = ""
-    architecture                = ""
-    custom_user_username        = ""
-    primary_pod_volume_size     = ""
-    secondary_pod_replica_count = 1
-    secondary_pod_volume_size   = ""
-    storage_class_name          = ""
-    values_yaml                 = ""
+    name                       = ""
+    environment                = ""
+    values_yaml                = ""
+    architecture               = ""
+    storage_class_name         = ""
+    custom_user_username       = ""
+    primary_db_volume_size     = ""
+    secondary_db_volume_size   = ""
+    secondary_db_replica_count = 1
   }
   description = "Mysql configurations"
 }
@@ -40,9 +40,9 @@ variable "mysqldb_backup_enabled" {
 variable "mysqldb_backup_config" {
   type = any
   default = {
-    s3_bucket_uri        = "s3://mysqlbackupp"
-    s3_bucket_region     = "us-east-2"
-    cron_for_full_backup = "*/5 * * * *"
+    s3_bucket_uri        = ""
+    s3_bucket_region     = ""
+    cron_for_full_backup = ""
   }
   description = "Mysql Backup configurations"
 }
@@ -66,7 +66,22 @@ variable "cluster_name" {
 }
 
 variable "create_namespace" {
-  type = string
+  type        = string
   description = "Set it to true to create given namespace"
-  default = true
+  default     = true
+}
+
+variable "mysqldb_restore_enabled" {
+  type        = bool
+  default     = true
+  description = "Set true to enable mysql restore"
+}
+
+variable "mysqldb_restore_config" {
+  type = any
+  default = {
+    s3_bucket_uri    = ""
+    s3_bucket_region = ""
+  }
+  description = "Mysql Restore configurations"
 }

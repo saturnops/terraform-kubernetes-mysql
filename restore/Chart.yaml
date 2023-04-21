@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A helm chart for restore of mysql and stored in S3
+name: mysql-restore
+version: 1.0.0
