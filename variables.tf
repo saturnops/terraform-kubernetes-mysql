@@ -73,7 +73,7 @@ variable "create_namespace" {
 
 variable "mysqldb_restore_enabled" {
   type        = bool
-  default     = true
+  default     = false
   description = "Set true to enable mysql restore"
 }
 

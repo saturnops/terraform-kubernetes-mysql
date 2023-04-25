@@ -26,7 +26,7 @@ module "mysql" {
   }
   mysqldb_restore_enabled = true
   mysqldb_restore_config = {
-    s3_bucket_uri    = "s3://mysqldumprestore/20-ratings.sql"
+    s3_bucket_uri    = "s3://mysqldumprestore/10-dump.sql"
     s3_bucket_region = "us-east-2"
 
   }
