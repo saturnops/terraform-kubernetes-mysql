@@ -95,7 +95,7 @@ No modules.
 | <a name="input_mysqldb_config"></a> [mysqldb\_config](#input\_mysqldb\_config) | Mysql configurations | `any` | <pre>{<br>  "architecture": "",<br>  "custom_user_username": "",<br>  "environment": "",<br>  "name": "",<br>  "primary_db_volume_size": "",<br>  "secondary_db_replica_count": 1,<br>  "secondary_db_volume_size": "",<br>  "storage_class_name": "",<br>  "values_yaml": ""<br>}</pre> | no |
 | <a name="input_mysqldb_exporter_enabled"></a> [mysqldb\_exporter\_enabled](#input\_mysqldb\_exporter\_enabled) | Set true to deploy mysqldb exporters to get metrics in grafana | `bool` | `false` | no |
 | <a name="input_mysqldb_restore_config"></a> [mysqldb\_restore\_config](#input\_mysqldb\_restore\_config) | Mysql Restore configurations | `any` | <pre>{<br>  "s3_bucket_region": "",<br>  "s3_bucket_uri": ""<br>}</pre> | no |
-| <a name="input_mysqldb_restore_enabled"></a> [mysqldb\_restore\_enabled](#input\_mysqldb\_restore\_enabled) | Set true to enable mysql restore | `bool` | `true` | no |
+| <a name="input_mysqldb_restore_enabled"></a> [mysqldb\_restore\_enabled](#input\_mysqldb\_restore\_enabled) | Set true to enable mysql restore | `bool` | `false` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace name | `string` | `"mysqldb"` | no |
 | <a name="input_recovery_window_aws_secret"></a> [recovery\_window\_aws\_secret](#input\_recovery\_window\_aws\_secret) | Number of days that AWS Secrets Manager waits before it can delete the secret. This value can be 0 to force deletion without recovery or range from 7 to 30 days. | `number` | `0` | no |
 
@@ -103,11 +103,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_mysql_port"></a> [mysql\_port](#output\_mysql\_port) | n/a |
-| <a name="output_mysql_primary_endpoint"></a> [mysql\_primary\_endpoint](#output\_mysql\_primary\_endpoint) | n/a |
-| <a name="output_mysql_primary_headless_endpoint"></a> [mysql\_primary\_headless\_endpoint](#output\_mysql\_primary\_headless\_endpoint) | n/a |
-| <a name="output_mysql_secondary_endpoint"></a> [mysql\_secondary\_endpoint](#output\_mysql\_secondary\_endpoint) | n/a |
-| <a name="output_mysql_secondary_headless_endpoint"></a> [mysql\_secondary\_headless\_endpoint](#output\_mysql\_secondary\_headless\_endpoint) | n/a |
+| <a name="output_mysqldb"></a> [mysqldb](#output\_mysqldb) | MysqlDB\_Info |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 
