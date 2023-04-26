@@ -1,5 +1,5 @@
 primary:
-    affinity: 
+    affinity:
         nodeAffinity:
             requiredDuringSchedulingIgnoredDuringExecution:
                 nodeSelectorTerms:
@@ -10,7 +10,7 @@ primary:
                       - "true"
 
 secondary:
-    affinity: 
+    affinity:
         nodeAffinity:
             requiredDuringSchedulingIgnoredDuringExecution:
                 nodeSelectorTerms:

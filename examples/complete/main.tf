@@ -1,30 +1,34 @@
 locals {
-  region      = "us-east-2"
-  name        = "skaf"
-  environment = "prod"
+  name        = "test"
+  region      = "ap-south-1"
+  environment = "saturnops"
 }
 
 module "mysql" {
-  source                   = "../.."
-  mysqldb_backup_enabled   = true
-  mysqldb_exporter_enabled = false
-  cluster_name             = "cluster-name"
+  source       = "../../"
+  cluster_name = "test-saturnops"
   mysqldb_config = {
-    name                        = local.name
-    environment                 = local.environment
-    architecture                = "replication"
-    custom_user_username        = "admin"
-    primary_pod_volume_size     = "10Gi"
-    secondary_pod_replica_count = 1
-    secondary_pod_volume_size   = "10Gi"
-    storage_class_name          = "infra-service-sc"
-    values_yaml                 = file("./helm/values.yaml")
+    name                       = local.name
+    values_yaml                = file("./helm/values.yaml")
+    environment                = local.environment
+    architecture               = "replication"
+    storage_class_name         = "infra-service-sc"
+    custom_user_username       = "admin"
+    primary_db_volume_size     = "10Gi"
+    secondary_db_volume_size   = "10Gi"
+    secondary_db_replica_count = 2
   }
+  mysqldb_backup_enabled = true
   mysqldb_backup_config = {
-    s3_bucket_uri        = "s3://bucketname"
-    s3_bucket_region     = "bucket_region"
+    s3_bucket_uri        = "s3://mysqlbackupp"
+    s3_bucket_region     = "us-east-2"
     cron_for_full_backup = "*/2 * * * *"
   }
+  mysqldb_restore_enabled = true
+  mysqldb_restore_config = {
+    s3_bucket_uri    = "s3://mysqldumprestore/10-dump.sql"
+    s3_bucket_region = "us-east-2"
 
-
+  }
+  mysqldb_exporter_enabled = false
 }

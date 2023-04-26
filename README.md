@@ -8,25 +8,25 @@
 ```hcl
 module "mysql" {
   source                   = "../.."
-  mysqldb_backup_enabled   = false
-  mysqldb_exporter_enabled = false
-  cluster_name             = "cluster-name"
+  cluster_name             = "dev-skaf"
   mysqldb_config = {
-    name                        = "skaf"
-    environment                 = "prod"
-    architecture                = "replication"
-    custom_user_username        = "admin"
-    primary_pod_volume_size     = "10Gi"
-    secondary_pod_replica_count = 1
-    secondary_pod_volume_size   = "10Gi"
-    storage_class_name          = "infra-service-sc"
-    values_yaml = file("./helm/values.yaml")
+    name                       = "skaf"
+    values_yaml                = ""
+    environment                = "prod"
+    architecture               = "replication"
+    storage_class_name         = "infra-service-sc"
+    custom_user_username       = "admin"
+    primary_db_volume_size     = "10Gi"
+    secondary_db_volume_size   = "10Gi"
+    secondary_db_replica_count = 2
   }
+  mysqldb_backup_enabled   = true
   mysqldb_backup_config = {
-    s3_bucket_uri         = "s3://bucketname"
-    s3_bucket_region      = "bucket-region"
-    cron_for_full_backup  = "* * * * *"
+    s3_bucket_uri        = "s3://bucket-name"
+    s3_bucket_region     = "bucket-region"
+    cron_for_full_backup = "*/2 * * * *"
   }
+  mysqldb_exporter_enabled = true
 }
 
 
@@ -68,10 +68,12 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_iam_role.mysql_backup_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.mysql_restore_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_secretsmanager_secret.mysql_user_password](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret) | resource |
 | [aws_secretsmanager_secret_version.mysql_user_password](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version) | resource |
 | [helm_release.mysqldb](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [helm_release.mysqldb_backup](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.mysqldb_restore](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [kubernetes_namespace.mysqldb](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [random_password.mysqldb_custom_user_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_password.mysqldb_exporter_user_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
@@ -87,10 +89,13 @@ No modules.
 | <a name="input_app_version"></a> [app\_version](#input\_app\_version) | App version | `string` | `"8.0.29-debian-11-r9"` | no |
 | <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | Chart version | `string` | `"9.2.0"` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the EKS cluster | `string` | `""` | no |
-| <a name="input_mysqldb_backup_config"></a> [mysqldb\_backup\_config](#input\_mysqldb\_backup\_config) | Mysql Backup configurations | `any` | <pre>{<br>  "cron_for_full_backup": "*/5 * * * *",<br>  "s3_bucket_region": "us-east-2",<br>  "s3_bucket_uri": "s3://mysqlbackupp"<br>}</pre> | no |
+| <a name="input_create_namespace"></a> [create\_namespace](#input\_create\_namespace) | Set it to true to create given namespace | `string` | `true` | no |
+| <a name="input_mysqldb_backup_config"></a> [mysqldb\_backup\_config](#input\_mysqldb\_backup\_config) | Mysql Backup configurations | `any` | <pre>{<br>  "cron_for_full_backup": "",<br>  "s3_bucket_region": "",<br>  "s3_bucket_uri": ""<br>}</pre> | no |
 | <a name="input_mysqldb_backup_enabled"></a> [mysqldb\_backup\_enabled](#input\_mysqldb\_backup\_enabled) | Set true to enable mysql backups | `bool` | `false` | no |
-| <a name="input_mysqldb_config"></a> [mysqldb\_config](#input\_mysqldb\_config) | Mysql configurations | `any` | <pre>{<br>  "architecture": "",<br>  "custom_user_username": "",<br>  "environment": "",<br>  "name": "",<br>  "primary_pod_volume_size": "",<br>  "secondary_pod_replica_count": 1,<br>  "secondary_pod_volume_size": "",<br>  "storage_class_name": "",<br>  "values_yaml": ""<br>}</pre> | no |
+| <a name="input_mysqldb_config"></a> [mysqldb\_config](#input\_mysqldb\_config) | Mysql configurations | `any` | <pre>{<br>  "architecture": "",<br>  "custom_user_username": "",<br>  "environment": "",<br>  "name": "",<br>  "primary_db_volume_size": "",<br>  "secondary_db_replica_count": 1,<br>  "secondary_db_volume_size": "",<br>  "storage_class_name": "",<br>  "values_yaml": ""<br>}</pre> | no |
 | <a name="input_mysqldb_exporter_enabled"></a> [mysqldb\_exporter\_enabled](#input\_mysqldb\_exporter\_enabled) | Set true to deploy mysqldb exporters to get metrics in grafana | `bool` | `false` | no |
+| <a name="input_mysqldb_restore_config"></a> [mysqldb\_restore\_config](#input\_mysqldb\_restore\_config) | Mysql Restore configurations | `any` | <pre>{<br>  "s3_bucket_region": "",<br>  "s3_bucket_uri": ""<br>}</pre> | no |
+| <a name="input_mysqldb_restore_enabled"></a> [mysqldb\_restore\_enabled](#input\_mysqldb\_restore\_enabled) | Set true to enable mysql restore | `bool` | `false` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace name | `string` | `"mysqldb"` | no |
 | <a name="input_recovery_window_aws_secret"></a> [recovery\_window\_aws\_secret](#input\_recovery\_window\_aws\_secret) | Number of days that AWS Secrets Manager waits before it can delete the secret. This value can be 0 to force deletion without recovery or range from 7 to 30 days. | `number` | `0` | no |
 
@@ -98,11 +103,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_mysql_port"></a> [mysql\_port](#output\_mysql\_port) | n/a |
-| <a name="output_mysql_primary_endpoint"></a> [mysql\_primary\_endpoint](#output\_mysql\_primary\_endpoint) | n/a |
-| <a name="output_mysql_primary_headless_endpoint"></a> [mysql\_primary\_headless\_endpoint](#output\_mysql\_primary\_headless\_endpoint) | n/a |
-| <a name="output_mysql_secondary_endpoint"></a> [mysql\_secondary\_endpoint](#output\_mysql\_secondary\_endpoint) | n/a |
-| <a name="output_mysql_secondary_headless_endpoint"></a> [mysql\_secondary\_headless\_endpoint](#output\_mysql\_secondary\_headless\_endpoint) | n/a |
+| <a name="output_mysqldb"></a> [mysqldb](#output\_mysqldb) | MysqlDB\_Info |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 
