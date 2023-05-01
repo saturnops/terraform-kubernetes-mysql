@@ -81,6 +81,7 @@ resource "helm_release" "mysqldb" {
       replication_password        = random_password.mysqldb_replication_user_password.result,
       mysqldb_root_password       = random_password.mysqldb_root_password.result,
       mysqldb_exporter_enabled    = var.mysqldb_exporter_enabled,
+      service_monitor_namespace   = var.namespace
       metrics_exporter_password   = random_password.mysqldb_exporter_user_password.result,
       secondary_pod_replica_count = var.mysqldb_config.secondary_db_replica_count
     }),

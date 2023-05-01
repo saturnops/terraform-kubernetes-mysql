@@ -1217,7 +1217,7 @@ metrics:
     enabled: true
     ## @param metrics.serviceMonitor.namespace Specify the namespace in which the serviceMonitor resource will be created
     ##
-    namespace: "monitoring"
+    namespace: "${service_monitor_namespace}"
     ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
     ##
     jobLabel: ""
