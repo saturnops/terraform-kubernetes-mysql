@@ -1,5 +1,5 @@
 output "mysqldb" {
-  description = "MysqlDB_Info"
+  description = "Mysql_Info"
   value = {
     mysqlport                         = "3306",
     mysql_primary_endpoint            = "mysqldb-primary.${var.namespace}.svc.cluster.local",

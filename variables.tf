@@ -11,30 +11,30 @@ variable "mysqldb_config" {
     secondary_db_volume_size   = ""
     secondary_db_replica_count = 1
   }
-  description = "Mysql configurations"
+  description = "Specify the configuration settings for MySQL, including the name, environment, storage options, replication settings, and custom YAML values."
 }
 
 variable "app_version" {
   type        = string
   default     = "8.0.29-debian-11-r9"
-  description = "App version"
+  description = "Version of the MySQL application that will be deployed."
 }
 
 variable "chart_version" {
   type        = string
   default     = "9.2.0"
-  description = "Chart version"
+  description = "Version of the Mysql chart that will be used to deploy MySQL application."
 }
 
 variable "namespace" {
   type        = string
   default     = "mysqldb"
-  description = "Namespace name"
+  description = "Name of the Kubernetes namespace where the MYSQL deployment will be deployed."
 }
 variable "mysqldb_backup_enabled" {
   type        = bool
   default     = false
-  description = "Set true to enable mysql backups"
+  description = "Specifies whether to enable backups for MySQL database."
 }
 
 variable "mysqldb_backup_config" {
@@ -44,37 +44,37 @@ variable "mysqldb_backup_config" {
     s3_bucket_region     = ""
     cron_for_full_backup = ""
   }
-  description = "Mysql Backup configurations"
+  description = "configuration options for MySQL database backups. It includes properties such as the S3 bucket URI, the S3 bucket region, and the cron expression for full backups."
 }
 
 variable "mysqldb_exporter_enabled" {
   type        = bool
   default     = false
-  description = "Set true to deploy mysqldb exporters to get metrics in grafana"
+  description = "Specify whether or not to deploy Mysql exporter to collect Mysql metrics for monitoring in Grafana."
 }
 
 variable "recovery_window_aws_secret" {
   type        = number
   default     = 0
-  description = "Number of days that AWS Secrets Manager waits before it can delete the secret. This value can be 0 to force deletion without recovery or range from 7 to 30 days."
+  description = "Number of days that AWS Secrets Manager will wait before deleting a secret. This value can be set to 0 to force immediate deletion, or to a value between 7 and 30 days to allow for recovery."
 }
 
 variable "cluster_name" {
   type        = string
   default     = ""
-  description = "Name of the EKS cluster"
+  description = "specifies the name of the EKS cluster to deploy the MySQL application on."
 }
 
 variable "create_namespace" {
   type        = string
-  description = "Set it to true to create given namespace"
+  description = "Specify whether or not to create the namespace if it does not already exist. Set it to true to create the namespace."
   default     = true
 }
 
 variable "mysqldb_restore_enabled" {
   type        = bool
   default     = false
-  description = "Set true to enable mysql restore"
+  description = "Specifies whether to enable restoring dump to the MySQL database."
 }
 
 variable "mysqldb_restore_config" {
@@ -83,5 +83,5 @@ variable "mysqldb_restore_config" {
     s3_bucket_uri    = ""
     s3_bucket_region = ""
   }
-  description = "Mysql Restore configurations"
+  description = "Configuration options for restoring dump to the MySQL database."
 }

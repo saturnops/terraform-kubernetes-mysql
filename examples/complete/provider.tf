@@ -1,14 +1,17 @@
 provider "aws" {
   region = local.region
+  default_tags {
+    tags = local.additional_tags
+  }
 }
 
 
 data "aws_eks_cluster" "cluster" {
-  name = "dev-skaf"
+  name = ""
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = "dev-skaf"
+  name = ""
 }
 
 
