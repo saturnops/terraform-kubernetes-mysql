@@ -4,7 +4,7 @@
 <br>
 This module allows you to easily deploy a MySQL database on Kubernetes using Helm. It provides flexible configuration options for the MySQL database, including storage class, database volume sizes, and architecture. In addition, it supports enabling backups and restoring from backups, as well as deploying MySQL database exporters to gather metrics for Grafana. This module is designed to be highly configurable and customizable, and can be easily integrated into your existing Terraform infrastructure code.
 
-## Supported Versions Table:
+## Supported Versions:
 
 |  MysqlDB Helm Chart Version    |     K8s supported version   |  
 | :-----:                       |         :---                |
