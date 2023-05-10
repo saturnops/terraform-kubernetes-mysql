@@ -62,7 +62,7 @@ variable "recovery_window_aws_secret" {
 variable "cluster_name" {
   type        = string
   default     = ""
-  description = "specifies the name of the EKS cluster to deploy the MySQL application on."
+  description = "Specifies the name of the EKS cluster to deploy the MySQL application on."
 }
 
 variable "create_namespace" {

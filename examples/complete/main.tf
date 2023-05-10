@@ -34,5 +34,5 @@ module "mysql" {
     s3_bucket_uri    = "s3://mysqldumprestore/10-dump.sql"
     s3_bucket_region = "us-east-2"
   }
-  mysqldb_exporter_enabled = false
+  mysqldb_exporter_enabled = true
 }
