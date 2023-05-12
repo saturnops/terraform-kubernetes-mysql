@@ -2,19 +2,27 @@
 
 
 <br>
+This module allows you to easily deploy a MySQL database on Kubernetes using Helm. It provides flexible configuration options for the MySQL database, including storage class, database volume sizes, and architecture. In addition, it supports enabling backups and restoring from backups, as well as deploying MySQL database exporters to gather metrics for Grafana. This module is designed to be highly configurable and customizable, and can be easily integrated into your existing Terraform infrastructure code.
+
+## Supported Versions:
+
+|  MysqlDB Helm Chart Version    |     K8s supported version   |  
+| :-----:                       |         :---                |
+| **9.2.0**                     |    **1.23,1.24,1.25**           |
+
 
 ## Usage Example
 
 ```hcl
 module "mysql" {
-  source                   = "../.."
-  cluster_name             = "dev-skaf"
+  source                   = "https://github.com/sq-ia/terraform-kubernetes-mysql.git"
+  cluster_name             = "dev-cluster"
   mysqldb_config = {
     name                       = "skaf"
     values_yaml                = ""
     environment                = "prod"
     architecture               = "replication"
-    storage_class_name         = "infra-service-sc"
+    storage_class_name         = "gp2"
     custom_user_username       = "admin"
     primary_db_volume_size     = "10Gi"
     secondary_db_volume_size   = "10Gi"
@@ -22,9 +30,14 @@ module "mysql" {
   }
   mysqldb_backup_enabled   = true
   mysqldb_backup_config = {
-    s3_bucket_uri        = "s3://bucket-name"
-    s3_bucket_region     = "bucket-region"
-    cron_for_full_backup = "*/2 * * * *"
+    s3_bucket_uri        = ""
+    s3_bucket_region     = ""
+    cron_for_full_backup = "* * * * *"
+  }
+  mysqldb_restore_enabled = true
+  mysqldb_restore_config = {
+    s3_bucket_uri    = ""
+    s3_bucket_region = ""
   }
   mysqldb_exporter_enabled = true
 }
@@ -86,24 +99,24 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_app_version"></a> [app\_version](#input\_app\_version) | App version | `string` | `"8.0.29-debian-11-r9"` | no |
-| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | Chart version | `string` | `"9.2.0"` | no |
-| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the EKS cluster | `string` | `""` | no |
-| <a name="input_create_namespace"></a> [create\_namespace](#input\_create\_namespace) | Set it to true to create given namespace | `string` | `true` | no |
-| <a name="input_mysqldb_backup_config"></a> [mysqldb\_backup\_config](#input\_mysqldb\_backup\_config) | Mysql Backup configurations | `any` | <pre>{<br>  "cron_for_full_backup": "",<br>  "s3_bucket_region": "",<br>  "s3_bucket_uri": ""<br>}</pre> | no |
-| <a name="input_mysqldb_backup_enabled"></a> [mysqldb\_backup\_enabled](#input\_mysqldb\_backup\_enabled) | Set true to enable mysql backups | `bool` | `false` | no |
-| <a name="input_mysqldb_config"></a> [mysqldb\_config](#input\_mysqldb\_config) | Mysql configurations | `any` | <pre>{<br>  "architecture": "",<br>  "custom_user_username": "",<br>  "environment": "",<br>  "name": "",<br>  "primary_db_volume_size": "",<br>  "secondary_db_replica_count": 1,<br>  "secondary_db_volume_size": "",<br>  "storage_class_name": "",<br>  "values_yaml": ""<br>}</pre> | no |
-| <a name="input_mysqldb_exporter_enabled"></a> [mysqldb\_exporter\_enabled](#input\_mysqldb\_exporter\_enabled) | Set true to deploy mysqldb exporters to get metrics in grafana | `bool` | `false` | no |
-| <a name="input_mysqldb_restore_config"></a> [mysqldb\_restore\_config](#input\_mysqldb\_restore\_config) | Mysql Restore configurations | `any` | <pre>{<br>  "s3_bucket_region": "",<br>  "s3_bucket_uri": ""<br>}</pre> | no |
-| <a name="input_mysqldb_restore_enabled"></a> [mysqldb\_restore\_enabled](#input\_mysqldb\_restore\_enabled) | Set true to enable mysql restore | `bool` | `false` | no |
-| <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace name | `string` | `"mysqldb"` | no |
-| <a name="input_recovery_window_aws_secret"></a> [recovery\_window\_aws\_secret](#input\_recovery\_window\_aws\_secret) | Number of days that AWS Secrets Manager waits before it can delete the secret. This value can be 0 to force deletion without recovery or range from 7 to 30 days. | `number` | `0` | no |
+| <a name="input_app_version"></a> [app\_version](#input\_app\_version) | Version of the MySQL application that will be deployed. | `string` | `"8.0.29-debian-11-r9"` | no |
+| <a name="input_chart_version"></a> [chart\_version](#input\_chart\_version) | Version of the Mysql chart that will be used to deploy MySQL application. | `string` | `"9.2.0"` | no |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Specifies the name of the EKS cluster to deploy the MySQL application on. | `string` | `""` | no |
+| <a name="input_create_namespace"></a> [create\_namespace](#input\_create\_namespace) | Specify whether or not to create the namespace if it does not already exist. Set it to true to create the namespace. | `string` | `true` | no |
+| <a name="input_mysqldb_backup_config"></a> [mysqldb\_backup\_config](#input\_mysqldb\_backup\_config) | configuration options for MySQL database backups. It includes properties such as the S3 bucket URI, the S3 bucket region, and the cron expression for full backups. | `any` | <pre>{<br>  "cron_for_full_backup": "",<br>  "s3_bucket_region": "",<br>  "s3_bucket_uri": ""<br>}</pre> | no |
+| <a name="input_mysqldb_backup_enabled"></a> [mysqldb\_backup\_enabled](#input\_mysqldb\_backup\_enabled) | Specifies whether to enable backups for MySQL database. | `bool` | `false` | no |
+| <a name="input_mysqldb_config"></a> [mysqldb\_config](#input\_mysqldb\_config) | Specify the configuration settings for MySQL, including the name, environment, storage options, replication settings, and custom YAML values. | `any` | <pre>{<br>  "architecture": "",<br>  "custom_user_username": "",<br>  "environment": "",<br>  "name": "",<br>  "primary_db_volume_size": "",<br>  "secondary_db_replica_count": 1,<br>  "secondary_db_volume_size": "",<br>  "storage_class_name": "",<br>  "values_yaml": ""<br>}</pre> | no |
+| <a name="input_mysqldb_exporter_enabled"></a> [mysqldb\_exporter\_enabled](#input\_mysqldb\_exporter\_enabled) | Specify whether or not to deploy Mysql exporter to collect Mysql metrics for monitoring in Grafana. | `bool` | `false` | no |
+| <a name="input_mysqldb_restore_config"></a> [mysqldb\_restore\_config](#input\_mysqldb\_restore\_config) | Configuration options for restoring dump to the MySQL database. | `any` | <pre>{<br>  "s3_bucket_region": "",<br>  "s3_bucket_uri": ""<br>}</pre> | no |
+| <a name="input_mysqldb_restore_enabled"></a> [mysqldb\_restore\_enabled](#input\_mysqldb\_restore\_enabled) | Specifies whether to enable restoring dump to the MySQL database. | `bool` | `false` | no |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | Name of the Kubernetes namespace where the MYSQL deployment will be deployed. | `string` | `"mysqldb"` | no |
+| <a name="input_recovery_window_aws_secret"></a> [recovery\_window\_aws\_secret](#input\_recovery\_window\_aws\_secret) | Number of days that AWS Secrets Manager will wait before deleting a secret. This value can be set to 0 to force immediate deletion, or to a value between 7 and 30 days to allow for recovery. | `number` | `0` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_mysqldb"></a> [mysqldb](#output\_mysqldb) | MysqlDB\_Info |
+| <a name="output_mysqldb"></a> [mysqldb](#output\_mysqldb) | Mysql\_Info |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 

@@ -1,12 +1,17 @@
 locals {
-  name        = "test"
-  region      = "ap-south-1"
-  environment = "saturnops"
+  name        = "mysql"
+  region      = "us-east-2"
+  environment = "prod"
+  additional_tags = {
+    Owner      = "organization_name"
+    Expires    = "Never"
+    Department = "Engineering"
+  }
 }
 
 module "mysql" {
-  source       = "../../"
-  cluster_name = "test-saturnops"
+  source       = "https://github.com/sq-ia/terraform-kubernetes-mysql.git"
+  cluster_name = ""
   mysqldb_config = {
     name                       = local.name
     values_yaml                = file("./helm/values.yaml")
@@ -28,7 +33,6 @@ module "mysql" {
   mysqldb_restore_config = {
     s3_bucket_uri    = "s3://mysqldumprestore/10-dump.sql"
     s3_bucket_region = "us-east-2"
-
   }
-  mysqldb_exporter_enabled = false
+  mysqldb_exporter_enabled = true
 }
