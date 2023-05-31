@@ -18,11 +18,11 @@ module "mysql" {
   source                   = "saturnops/mysql/kubernetes"
   cluster_name             = "dev-cluster"
   mysqldb_config = {
-    name                       = "skaf"
+    name                       = "mysql"
     values_yaml                = ""
     environment                = "prod"
     architecture               = "replication"
-    storage_class_name         = "gp2"
+    storage_class_name         = "gp3"
     custom_user_username       = "admin"
     primary_db_volume_size     = "10Gi"
     secondary_db_volume_size   = "10Gi"

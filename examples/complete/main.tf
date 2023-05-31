@@ -17,7 +17,7 @@ module "mysql" {
     values_yaml                = file("./helm/values.yaml")
     environment                = local.environment
     architecture               = "replication"
-    storage_class_name         = "infra-service-sc"
+    storage_class_name         = "gp3"
     custom_user_username       = "admin"
     primary_db_volume_size     = "10Gi"
     secondary_db_volume_size   = "10Gi"
