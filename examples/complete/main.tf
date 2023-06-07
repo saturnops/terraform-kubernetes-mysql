@@ -31,7 +31,7 @@ module "mysql" {
   }
   mysqldb_restore_enabled = true
   mysqldb_restore_config = {
-    s3_bucket_uri    = "s3://bucket_region/filename"
+    s3_bucket_uri    = "s3://bucket_name/filename"
     s3_bucket_region = "bucket_region"
   }
   mysqldb_exporter_enabled = true

@@ -40,13 +40,4 @@ spec:
                 secretKeyRef:
                   name: aws-mysql
                   key: AWS_DEFAULT_REGION
-            # - name: AWS_ACCESS_KEY_ID
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: aws-key
-            #       key: AWS_ACCESS_KEY_ID
-            # - name: AWS_SECRET_ACCESS_KEY
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: aws-secret
-            #       key: AWS_SECRET_ACCESS_KEY
+
