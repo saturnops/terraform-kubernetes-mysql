@@ -10,14 +10,14 @@ locals {
 }
 
 module "mysql" {
-  source       = "https://github.com/sq-ia/terraform-kubernetes-mysql.git"
+  source       = "saturnops/mysql/kubernetes"
   cluster_name = ""
   mysqldb_config = {
     name                       = local.name
     values_yaml                = file("./helm/values.yaml")
     environment                = local.environment
     architecture               = "replication"
-    storage_class_name         = "infra-service-sc"
+    storage_class_name         = "gp3"
     custom_user_username       = "admin"
     primary_db_volume_size     = "10Gi"
     secondary_db_volume_size   = "10Gi"
@@ -25,14 +25,14 @@ module "mysql" {
   }
   mysqldb_backup_enabled = true
   mysqldb_backup_config = {
-    s3_bucket_uri        = "s3://mysqlbackupp"
-    s3_bucket_region     = "us-east-2"
-    cron_for_full_backup = "*/2 * * * *"
+    s3_bucket_uri        = "s3://bucket_name"
+    s3_bucket_region     = "bucket_region"
+    cron_for_full_backup = "* * * * *"
   }
   mysqldb_restore_enabled = true
   mysqldb_restore_config = {
-    s3_bucket_uri    = "s3://mysqldumprestore/10-dump.sql"
-    s3_bucket_region = "us-east-2"
+    s3_bucket_uri    = "s3://bucket_name/filename"
+    s3_bucket_region = "bucket_region"
   }
   mysqldb_exporter_enabled = true
 }

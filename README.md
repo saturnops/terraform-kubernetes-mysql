@@ -15,14 +15,14 @@ This module allows you to easily deploy a MySQL database on Kubernetes using Hel
 
 ```hcl
 module "mysql" {
-  source                   = "https://github.com/sq-ia/terraform-kubernetes-mysql.git"
+  source                   = "saturnops/mysql/kubernetes"
   cluster_name             = "dev-cluster"
   mysqldb_config = {
-    name                       = "skaf"
+    name                       = "mysql"
     values_yaml                = ""
     environment                = "prod"
     architecture               = "replication"
-    storage_class_name         = "gp2"
+    storage_class_name         = "gp3"
     custom_user_username       = "admin"
     primary_db_volume_size     = "10Gi"
     secondary_db_volume_size   = "10Gi"
@@ -44,10 +44,10 @@ module "mysql" {
 
 
 ```
-Refer [examples](https://github.com/sq-ia/terraform-kubernetes-mysql/tree/main/examples/complete) for more details.
+Refer [examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete) for more details.
 
 ## IAM Permissions
-The required IAM permissions to create resources from this module can be found [here](https://github.com/sq-ia/terraform-kubernetes-mysql/blob/main/IAM.md)
+The required IAM permissions to create resources from this module can be found [here](https://github.com/saturnops/terraform-kubernetes-mysql/blob/main/IAM.md)
 
 ## Important Notes
   1. In order to enable the exporter, it is required to deploy Prometheus/Grafana first.
