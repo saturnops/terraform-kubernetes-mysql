@@ -40,7 +40,7 @@ variable "mysqldb_backup_enabled" {
 variable "mysqldb_backup_config" {
   type = any
   default = {
-    s3_bucket_uri        = ""
+    bucket_uri        = ""
     s3_bucket_region     = ""
     cron_for_full_backup = ""
   }
@@ -80,7 +80,7 @@ variable "mysqldb_restore_enabled" {
 variable "mysqldb_restore_config" {
   type = any
   default = {
-    s3_bucket_uri    = ""
+    bucket_uri    = ""
     s3_bucket_region = ""
   }
   description = "Configuration options for restoring dump to the MySQL database."

@@ -8,7 +8,8 @@ spec:
       serviceAccountName: sa-mysql-restore
       containers:
           - name: restore-mysqldb
-            image: saturnops01/mysqlrestore:latest
+            image: asia-south1-docker.pkg.dev/fresh-sanctuary-389006/roboshop/mysql-restore:1
+            imagePullPolicy: Always
             env:
             - name: MYSQL_HOST
               value: mysqldb-primary-headless.{{ .Release.Namespace }}.svc.cluster.local
@@ -19,15 +20,16 @@ spec:
                 secretKeyRef:
                     name: mysqldb
                     key: mysql-root-password
-            - name: MYSQL_BUCKET_URI
+            - name: MYSQL_BUCKET_RESTORE_URI
               valueFrom:
                 secretKeyRef:
                   name: mysql-bucket-uri-restore
                   key: MYSQL_BUCKET_URI
+            - name: RESTORE_FILE_NAME
+              value: mysqldump_20230710_120501.zip
+            - name: RESTORE_FROM
+              value: {{ .Values.provider_type}}
             - name: AWS_DEFAULT_REGION
-              valueFrom:
-                secretKeyRef:
-                  name: aws-mysql-restore
-                  key: AWS_DEFAULT_REGION
+              value: {{ .Values.restore.aws_default_region}}
       restartPolicy: Never
   backoffLimit: 4

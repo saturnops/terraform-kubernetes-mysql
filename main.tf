@@ -1,16 +1,4 @@
-locals {
-  oidc_provider = replace(
-    data.aws_eks_cluster.kubernetes_cluster.identity[0].oidc[0].issuer,
-    "/^https:///",
-    ""
-  )
-}
 
-data "aws_caller_identity" "current" {}
-
-data "aws_eks_cluster" "kubernetes_cluster" {
-  name = var.cluster_name
-}
 
 resource "random_password" "mysqldb_root_password" {
   length  = 20
@@ -32,26 +20,6 @@ resource "random_password" "mysqldb_exporter_user_password" {
   special = false
 }
 
-resource "aws_secretsmanager_secret" "mysql_user_password" {
-  name                    = format("%s/%s/%s", var.mysqldb_config.environment, var.mysqldb_config.name, "mysql")
-  recovery_window_in_days = var.recovery_window_aws_secret
-}
-
-resource "aws_secretsmanager_secret_version" "mysql_user_password" {
-  secret_id     = aws_secretsmanager_secret.mysql_user_password.id
-  secret_string = <<EOF
-   {
-    "root_user": "root",
-    "root_password": "${random_password.mysqldb_root_password.result}",
-    "custom_username": "${var.mysqldb_config.custom_user_username}",
-    "custom_user_password": "${random_password.mysqldb_custom_user_password.result}",
-    "replication_user": "replicator",
-    "replication_password": "${random_password.mysqldb_replication_user_password.result}",
-    "exporter_user": "mysqld_exporter",
-    "exporter_password": "${random_password.mysqldb_exporter_user_password.result}"
-   }
-EOF
-}
 
 resource "kubernetes_namespace" "mysqldb" {
   count = var.create_namespace ? 1 : 0
@@ -89,6 +57,25 @@ resource "helm_release" "mysqldb" {
   ]
 }
 
+module "aws" {
+  source = "./aws"
+  count = var.provider_type == "aws" ? 1 : 0
+  mysqldb_config = var.mysqldb_config
+  recovery_window_aws_secret = var.recovery_window_aws_secret
+  cluster_name = var.cluster_name
+  root_password = random_password.mysqldb_root_password.result
+  custom_user_password = random_password.mysqldb_custom_user_password.result
+  replication_password = random_password.mysqldb_replication_user_password.result
+  exporter_password = random_password.mysqldb_exporter_user_password.result
+}
+
+module "gcp" {
+  source = "./gcp"
+  count = var.provider_type == "gcp" ? 1 : 0
+  project_id = var.project_id
+  environment = var.environment
+}
+
 resource "helm_release" "mysqldb_backup" {
   depends_on = [helm_release.mysqldb]
   count      = var.mysqldb_backup_enabled ? 1 : 0
@@ -98,56 +85,16 @@ resource "helm_release" "mysqldb_backup" {
   namespace  = var.namespace
   values = [
     templatefile("${path.module}/helm/values/backup/values.yaml", {
-      s3_role_arn          = aws_iam_role.mysql_backup_role.arn
-      s3_bucket_uri        = var.mysqldb_backup_config.s3_bucket_uri,
-      s3_bucket_region     = var.mysqldb_backup_config.s3_bucket_region,
+      bucket_uri        = var.mysqldb_backup_config.bucket_uri,
+      s3_bucket_region     = var.provider_type == "aws" ? var.mysqldb_backup_config.s3_bucket_region : "",
       cron_for_full_backup = var.mysqldb_backup_config.cron_for_full_backup,
-      custom_user_username = "root"
+      custom_user_username = "root",
+      provider_type = var.provider_type,
+      annotations = var.provider_type == "aws" ? "eks.amazonaws.com/role-arn: ${module.aws.iam_role_arn_backup}" : "iam.gke.io/gcp-service-account: ${module.gcp.service_account_backup}"
     })
   ]
 }
 
-resource "aws_iam_role" "mysql_backup_role" {
-  name = format("%s-%s-%s", var.cluster_name, var.mysqldb_config.name, "mysql-backup")
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.oidc_provider}"
-        },
-        Action = "sts:AssumeRoleWithWebIdentity",
-        Condition = {
-          StringEquals = {
-            "${local.oidc_provider}:aud" = "sts.amazonaws.com",
-            "${local.oidc_provider}:sub" = "system:serviceaccount:${var.namespace}:sa-mysql-backup"
-          }
-        }
-      }
-    ]
-  })
-  inline_policy {
-    name = "AllowS3PutObject"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action = [
-            "s3:GetObject",
-            "s3:PutObject",
-            "s3:DeleteObject",
-            "s3:ListBucket",
-            "s3:AbortMultipartUpload",
-            "s3:ListMultipartUploadParts"
-          ]
-          Effect   = "Allow"
-          Resource = "*"
-        }
-      ]
-    })
-  }
-}
 
 ## DB dump restore
 resource "helm_release" "mysqldb_restore" {
@@ -159,52 +106,29 @@ resource "helm_release" "mysqldb_restore" {
   namespace  = var.namespace
   values = [
     templatefile("${path.module}/helm/values/restore/values.yaml", {
-      s3_role_arn          = aws_iam_role.mysql_restore_role.arn
-      s3_bucket_uri        = var.mysqldb_restore_config.s3_bucket_uri,
-      s3_bucket_region     = var.mysqldb_restore_config.s3_bucket_region,
-      custom_user_username = "root"
+      bucket_uri        = var.mysqldb_restore_config.bucket_uri,
+      s3_bucket_region     = var.provider_type == "aws" ? var.mysqldb_restore_config.s3_bucket_region : "",
+      custom_user_username = "root",
+      provider_type = var.provider_type,
+      annotations = var.provider_type == "aws" ? "eks.amazonaws.com/role-arn: ${module.aws.iam_role_arn_restore}" : "iam.gke.io/gcp-service-account: ${module.gcp.service_account_restore}"
     })
   ]
 }
 
-resource "aws_iam_role" "mysql_restore_role" {
-  name = format("%s-%s-%s", var.cluster_name, var.mysqldb_config.name, "mysql-restore")
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${local.oidc_provider}"
-        },
-        Action = "sts:AssumeRoleWithWebIdentity",
-        Condition = {
-          StringEquals = {
-            "${local.oidc_provider}:aud" = "sts.amazonaws.com",
-            "${local.oidc_provider}:sub" = "system:serviceaccount:${var.namespace}:sa-mysql-restore"
-          }
-        }
-      }
-    ]
-  })
-  inline_policy {
-    name = "AllowS3PutObject"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action = [
-            "s3:GetObject",
-            "s3:PutObject",
-            "s3:DeleteObject",
-            "s3:ListBucket",
-            "s3:AbortMultipartUpload",
-            "s3:ListMultipartUploadParts"
-          ]
-          Effect   = "Allow"
-          Resource = "*"
-        }
-      ]
-    })
-  }
+module "aws" {
+  source = "./aws"
+
+  count = var.provider_type == "aws" ? 1 : 0
+  mysqldb_config = var.mysqldb_config
+  recovery_window_aws_secret = var.recovery_window_aws_secret
+  cluster_name = var.cluster_name
+  
+}
+
+module "gcp" {
+  source = "./gcp"
+
+  count = var.provider_type == "gcp" ? 1 : 0
+  project_id = var.project_id
+  environment = var.environment
 }
