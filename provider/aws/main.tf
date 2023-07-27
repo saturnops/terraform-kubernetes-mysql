@@ -120,11 +120,11 @@ resource "aws_iam_role" "mysql_restore_role" {
 }
 
 output "iam_role_arn_backup" {
-  value = aws_iam_role.mysql_backup_role.arn
+  value       = aws_iam_role.mysql_backup_role.arn
   description = "IAM role arn for mysql backup"
 }
 
 output "iam_role_arn_restore" {
-  value = aws_iam_role.mysql_restore_role.arn
+  value       = aws_iam_role.mysql_restore_role.arn
   description = "IAM role arn for mysql restore"
 }

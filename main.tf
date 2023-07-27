@@ -58,22 +58,27 @@ resource "helm_release" "mysqldb" {
 }
 
 module "aws" {
-  source = "./aws"
-  count = var.provider_type == "aws" ? 1 : 0
-  mysqldb_config = var.mysqldb_config
+  source                     = "./provider/aws"
+  count                      = var.bucket_provider_type == "s3" ? 1 : 0
+  mysqldb_config             = var.mysqldb_config
   recovery_window_aws_secret = var.recovery_window_aws_secret
-  cluster_name = var.cluster_name
-  root_password = random_password.mysqldb_root_password.result
-  custom_user_password = random_password.mysqldb_custom_user_password.result
-  replication_password = random_password.mysqldb_replication_user_password.result
-  exporter_password = random_password.mysqldb_exporter_user_password.result
+  cluster_name               = var.cluster_name
+  root_password              = random_password.mysqldb_root_password.result
+  custom_user_password       = random_password.mysqldb_custom_user_password.result
+  replication_password       = random_password.mysqldb_replication_user_password.result
+  exporter_password          = random_password.mysqldb_exporter_user_password.result
 }
 
 module "gcp" {
-  source = "./gcp"
-  count = var.provider_type == "gcp" ? 1 : 0
-  project_id = var.project_id
-  environment = var.environment
+  source               = "./provider/gcp"
+  count                = var.bucket_provider_type == "gcs" ? 1 : 0
+  project_id           = var.project_id
+  environment          = var.mysqldb_config.environment
+  mysqldb_config       = var.mysqldb_config
+  root_password        = random_password.mysqldb_root_password.result
+  custom_user_password = random_password.mysqldb_custom_user_password.result
+  replication_password = random_password.mysqldb_replication_user_password.result
+  exporter_password    = random_password.mysqldb_exporter_user_password.result
 }
 
 resource "helm_release" "mysqldb_backup" {
@@ -85,12 +90,12 @@ resource "helm_release" "mysqldb_backup" {
   namespace  = var.namespace
   values = [
     templatefile("${path.module}/helm/values/backup/values.yaml", {
-      bucket_uri        = var.mysqldb_backup_config.bucket_uri,
-      s3_bucket_region     = var.provider_type == "aws" ? var.mysqldb_backup_config.s3_bucket_region : "",
+      bucket_uri           = var.mysqldb_backup_config.bucket_uri,
+      s3_bucket_region     = var.bucket_provider_type == "s3" ? var.mysqldb_backup_config.s3_bucket_region : "",
       cron_for_full_backup = var.mysqldb_backup_config.cron_for_full_backup,
       custom_user_username = "root",
-      provider_type = var.provider_type,
-      annotations = var.provider_type == "aws" ? "eks.amazonaws.com/role-arn: ${module.aws.iam_role_arn_backup}" : "iam.gke.io/gcp-service-account: ${module.gcp.service_account_backup}"
+      bucket_provider_type = var.bucket_provider_type,
+      annotations          = var.bucket_provider_type == "s3" ? "eks.amazonaws.com/role-arn: ${module.aws[0].iam_role_arn_backup}" : "iam.gke.io/gcp-service-account: ${module.gcp[0].service_account_backup}"
     })
   ]
 }
@@ -106,29 +111,12 @@ resource "helm_release" "mysqldb_restore" {
   namespace  = var.namespace
   values = [
     templatefile("${path.module}/helm/values/restore/values.yaml", {
-      bucket_uri        = var.mysqldb_restore_config.bucket_uri,
-      s3_bucket_region     = var.provider_type == "aws" ? var.mysqldb_restore_config.s3_bucket_region : "",
+      bucket_uri           = var.mysqldb_restore_config.bucket_uri,
+      file_name            = var.mysqldb_restore_config.file_name,
+      s3_bucket_region     = var.bucket_provider_type == "s3" ? var.mysqldb_restore_config.s3_bucket_region : "",
       custom_user_username = "root",
-      provider_type = var.provider_type,
-      annotations = var.provider_type == "aws" ? "eks.amazonaws.com/role-arn: ${module.aws.iam_role_arn_restore}" : "iam.gke.io/gcp-service-account: ${module.gcp.service_account_restore}"
+      bucket_provider_type = var.bucket_provider_type,
+      annotations          = var.bucket_provider_type == "s3" ? "eks.amazonaws.com/role-arn: ${module.aws[0].iam_role_arn_restore}" : "iam.gke.io/gcp-service-account: ${module.gcp[0].service_account_restore}"
     })
   ]
-}
-
-module "aws" {
-  source = "./aws"
-
-  count = var.provider_type == "aws" ? 1 : 0
-  mysqldb_config = var.mysqldb_config
-  recovery_window_aws_secret = var.recovery_window_aws_secret
-  cluster_name = var.cluster_name
-  
-}
-
-module "gcp" {
-  source = "./gcp"
-
-  count = var.provider_type == "gcp" ? 1 : 0
-  project_id = var.project_id
-  environment = var.environment
 }

@@ -1,5 +1,6 @@
 restore:
   bucket_uri: ${bucket_uri}
+  file_name: ${file_name}
   aws_default_region: ${s3_bucket_region}
 
 auth:
@@ -8,4 +9,4 @@ auth:
 annotations:
   ${annotations}
 
-provider_type: ${provider_type}
+bucket_provider_type: ${bucket_provider_type}

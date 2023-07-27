@@ -10,8 +10,9 @@ locals {
 }
 
 module "mysql" {
-  source       = "../../"
+  source       = "saturnops/mysql/kubernetes"
   cluster_name = ""
+  project_id   = "" #for gcp
   mysqldb_config = {
     name                       = local.name
     values_yaml                = file("./helm/values.yaml")
@@ -23,16 +24,18 @@ module "mysql" {
     secondary_db_volume_size   = "10Gi"
     secondary_db_replica_count = 2
   }
-  mysqldb_backup_enabled = false
+  bucket_provider_type   = "gcs"
+  mysqldb_backup_enabled = true
   mysqldb_backup_config = {
-    s3_bucket_uri        = "s3://bucket_name"
-    s3_bucket_region     = "bucket_region"
-    cron_for_full_backup = "* * * * *"
+    bucket_uri           = "gs://mysql-backup-skaf"
+    s3_bucket_region     = ""
+    cron_for_full_backup = "*/5 * * * *"
   }
-  mysqldb_restore_enabled = false
+  mysqldb_restore_enabled = true
   mysqldb_restore_config = {
-    s3_bucket_uri    = "s3://bucket_name/filename"
-    s3_bucket_region = "bucket_region"
+    bucket_uri       = "gs://mysql-backup-skaf/mysqldump_20230710_120501.zip"
+    file_name        = "mysqldump_20230710_120501.zip"
+    s3_bucket_region = ""
   }
   mysqldb_exporter_enabled = true
 }

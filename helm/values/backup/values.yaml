@@ -11,4 +11,4 @@ annotations:
 auth:
   username: "${custom_user_username}"
 
-provider_type: ${provider_type}
+bucket_provider_type: ${bucket_provider_type}

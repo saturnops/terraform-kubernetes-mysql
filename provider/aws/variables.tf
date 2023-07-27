@@ -45,3 +45,8 @@ variable "exporter_password" {
   description = "Password for the mysqld_exporter user"
   type        = string
 }
+variable "namespace" {
+  type        = string
+  default     = "mysqldb"
+  description = "Name of the Kubernetes namespace where the MYSQL deployment will be deployed."
+}

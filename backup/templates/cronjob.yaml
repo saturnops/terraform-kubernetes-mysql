@@ -19,7 +19,7 @@ spec:
           serviceAccountName: sa-mysql-backup
           containers:
           - name: backup-mysqldb
-            image: asia-south1-docker.pkg.dev/fresh-sanctuary-389006/roboshop/mysql-backup:1
+            image: saturnops/mysqldb-backup:v3
             imagePullPolicy: Always
             env:
             - name: MYSQL_HOST
@@ -36,7 +36,7 @@ spec:
                 secretKeyRef:
                   name: mysql-bucket-uri
                   key: MYSQL_BUCKET_URI
-            - name: CLOUD
-              value:  {{ .Values.provider_type }}
+            - name: BUCKET_PROVIDER
+              value:  "gcs"
             - name: AWS_DEFAULT_REGION
               value: {{ .Values.backup.aws_default_region }}

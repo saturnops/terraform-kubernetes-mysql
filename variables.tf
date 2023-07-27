@@ -40,7 +40,7 @@ variable "mysqldb_backup_enabled" {
 variable "mysqldb_backup_config" {
   type = any
   default = {
-    bucket_uri        = ""
+    bucket_uri           = ""
     s3_bucket_region     = ""
     cron_for_full_backup = ""
   }
@@ -80,8 +80,22 @@ variable "mysqldb_restore_enabled" {
 variable "mysqldb_restore_config" {
   type = any
   default = {
-    bucket_uri    = ""
+    bucket_uri       = ""
+    file_name        = ""
     s3_bucket_region = ""
   }
   description = "Configuration options for restoring dump to the MySQL database."
+}
+
+variable "bucket_provider_type" {
+  type        = string
+  default     = "gcs"
+  description = "Choose what type of provider you want (s3, gcs)"
+}
+
+
+variable "project_id" {
+  description = "Google Cloud project ID"
+  type        = string
+  default     = ""
 }

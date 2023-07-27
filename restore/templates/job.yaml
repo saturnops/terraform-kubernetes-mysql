@@ -8,7 +8,7 @@ spec:
       serviceAccountName: sa-mysql-restore
       containers:
           - name: restore-mysqldb
-            image: asia-south1-docker.pkg.dev/fresh-sanctuary-389006/roboshop/mysql-restore:1
+            image: saturnops/mysqldb-restore:v3
             imagePullPolicy: Always
             env:
             - name: MYSQL_HOST
@@ -26,9 +26,9 @@ spec:
                   name: mysql-bucket-uri-restore
                   key: MYSQL_BUCKET_URI
             - name: RESTORE_FILE_NAME
-              value: mysqldump_20230710_120501.zip
+              value: {{ .Values.restore.file_name}}
             - name: RESTORE_FROM
-              value: {{ .Values.provider_type}}
+              value: {{ .Values.bucket_provider_type}}
             - name: AWS_DEFAULT_REGION
               value: {{ .Values.restore.aws_default_region}}
       restartPolicy: Never
