@@ -37,6 +37,7 @@ module "mysql" {
   mysqldb_restore_enabled = true
   mysqldb_restore_config = {
     bucket_uri    = ""
+    file_name     = ""
     s3_bucket_region = ""
   }
   mysqldb_exporter_enabled = true
