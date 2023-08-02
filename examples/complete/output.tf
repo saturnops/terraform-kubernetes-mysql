@@ -1,4 +1,4 @@
-output "mysql_configuration" {
+output "mysql_endpoints" {
   value       = module.mysql.mysqldb_endpoints
   description = "Mysql_Info"
 }

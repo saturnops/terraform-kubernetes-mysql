@@ -40,4 +40,3 @@ spec:
                 secretKeyRef:
                   name: aws-mysql
                   key: AWS_DEFAULT_REGION
-
