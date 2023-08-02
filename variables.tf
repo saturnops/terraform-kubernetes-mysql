@@ -1,15 +1,16 @@
 variable "mysqldb_config" {
   type = any
   default = {
-    name                       = ""
-    environment                = ""
-    values_yaml                = ""
-    architecture               = ""
-    storage_class_name         = ""
-    custom_user_username       = ""
-    primary_db_volume_size     = ""
-    secondary_db_volume_size   = ""
-    secondary_db_replica_count = 1
+    name                             = ""
+    environment                      = ""
+    values_yaml                      = ""
+    architecture                     = ""
+    storage_class_name               = ""
+    custom_user_username             = ""
+    primary_db_volume_size           = ""
+    secondary_db_volume_size         = ""
+    secondary_db_replica_count       = 1
+    store_password_to_secret_manager = true
   }
   description = "Specify the configuration settings for MySQL, including the name, environment, storage options, replication settings, and custom YAML values."
 }

@@ -33,12 +33,14 @@ resource "random_password" "mysqldb_exporter_user_password" {
 }
 
 resource "aws_secretsmanager_secret" "mysql_user_password" {
+  count                   = var.mysqldb_config.store_password_to_secret_manager ? 1 : 0
   name                    = format("%s/%s/%s", var.mysqldb_config.environment, var.mysqldb_config.name, "mysql")
   recovery_window_in_days = var.recovery_window_aws_secret
 }
 
 resource "aws_secretsmanager_secret_version" "mysql_user_password" {
-  secret_id     = aws_secretsmanager_secret.mysql_user_password.id
+  count         = var.mysqldb_config.store_password_to_secret_manager ? 1 : 0
+  secret_id     = aws_secretsmanager_secret.mysql_user_password[0].id
   secret_string = <<EOF
    {
     "root_user": "root",
