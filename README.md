@@ -8,7 +8,7 @@ This module allows you to easily deploy a MySQL database on Kubernetes using Hel
 
 |  MysqlDB Helm Chart Version    |     K8s supported version   |  
 | :-----:                       |         :---                |
-| **9.2.0**                     |    **1.23,1.24,1.25**           |
+| **9.2.0**                     |    **1.23,1.24,1.25,1.26,1.27**           |
 
 
 ## Usage Example
