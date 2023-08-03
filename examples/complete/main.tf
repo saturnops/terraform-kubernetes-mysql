@@ -27,14 +27,14 @@ module "mysql" {
   }
   mysqldb_custom_credentials_enabled = true
   mysqldb_custom_credentials_config = {
-    root_user            = ""
-    root_password        = ""
-    custom_username      = ""
-    custom_user_password = ""
-    replication_user     = ""
-    replication_password = ""
-    exporter_user        = ""
-    exporter_password    = ""
+    root_user            = "root"
+    root_password        = "RJDRIFsYC8ZS1WQuV0ps"
+    custom_username      = "admin"
+    custom_user_password = "NCPFUKEMd7rrWuvMAa73"
+    replication_user     = "replicator"
+    replication_password = "nvAHhm1uGQNYWVw6ZyAH"
+    exporter_user        = "mysqld_exporter"
+    exporter_password    = "ZawhvpueAehRdKFlbjaq"
   }
   mysqldb_backup_enabled = true
   mysqldb_backup_config = {
