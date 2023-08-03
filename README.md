@@ -58,7 +58,7 @@ The required IAM permissions to create resources from this module can be found [
   5. To deploy Prometheus/Grafana, please follow the installation instructions for each tool in their respective documentation.
   6. Once Prometheus and Grafana are deployed, the exporter can be configured to scrape metrics data from your application or system and send it to Prometheus.
   7. Finally, you can use Grafana to create custom dashboards and visualize the metrics data collected by Prometheus.
-  8. This module is compatible with EKS version 1.23, which is great news for users deploying the module on an EKS cluster running that version. Review the module's documentation, meet specific configuration requirements, and test thoroughly after deployment to ensure everything works as expected.
+  8. This module is compatible with EKS version 1.23,1.24,1.25,1.26 and 1.27, which is great news for users deploying the module on an EKS cluster running that version. Review the module's documentation, meet specific configuration requirements, and test thoroughly after deployment to ensure everything works as expected.
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

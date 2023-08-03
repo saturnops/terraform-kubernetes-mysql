@@ -25,6 +25,17 @@ module "mysql" {
     secondary_db_replica_count       = 2
     store_password_to_secret_manager = local.store_password_to_secret_manager
   }
+  mysqldb_custom_credentials_enabled = false
+  mysqldb_custom_credentials_config = {
+    root_user            = ""
+    root_password        = ""
+    custom_username      = ""
+    custom_user_password = ""
+    replication_user     = ""
+    replication_password = ""
+    exporter_user        = ""
+    exporter_password    = ""
+  }
   mysqldb_backup_enabled = true
   mysqldb_backup_config = {
     s3_bucket_uri        = "s3://bucket_name"

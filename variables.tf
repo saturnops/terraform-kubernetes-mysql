@@ -15,6 +15,27 @@ variable "mysqldb_config" {
   description = "Specify the configuration settings for MySQL, including the name, environment, storage options, replication settings, and custom YAML values."
 }
 
+variable "mysqldb_custom_credentials_enabled" {
+  type        = bool
+  default     = false
+  description = "Specifies whether to enable custom for MySQL database."
+}
+
+variable "mysqldb_custom_credentials_config" {
+  type = any
+  default = {
+    root_user            = ""
+    root_password        = ""
+    custom_username      = ""
+    custom_user_password = ""
+    replication_user     = ""
+    replication_password = ""
+    exporter_user        = ""
+    exporter_password    = ""
+  }
+  description = "Specify the configuration settings for MySQL to pass custom credentials during creation"
+}
+
 variable "app_version" {
   type        = string
   default     = "8.0.29-debian-11-r9"
