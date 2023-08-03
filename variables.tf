@@ -18,7 +18,7 @@ variable "mysqldb_config" {
 variable "mysqldb_custom_credentials_enabled" {
   type        = bool
   default     = false
-  description = "Specifies whether to enable custom for MySQL database."
+  description = "Specifies whether to enable custom credentials for MySQL database."
 }
 
 variable "mysqldb_custom_credentials_config" {
