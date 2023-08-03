@@ -7,21 +7,34 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
+  store_password_to_secret_manager = true
 }
 
 module "mysql" {
   source       = "saturnops/mysql/kubernetes"
   cluster_name = ""
   mysqldb_config = {
-    name                       = local.name
-    values_yaml                = file("./helm/values.yaml")
-    environment                = local.environment
-    architecture               = "replication"
-    storage_class_name         = "gp3"
-    custom_user_username       = "admin"
-    primary_db_volume_size     = "10Gi"
-    secondary_db_volume_size   = "10Gi"
-    secondary_db_replica_count = 2
+    name                             = local.name
+    values_yaml                      = file("./helm/values.yaml")
+    environment                      = local.environment
+    architecture                     = "replication"
+    storage_class_name               = "gp3"
+    custom_user_username             = "admin"
+    primary_db_volume_size           = "10Gi"
+    secondary_db_volume_size         = "10Gi"
+    secondary_db_replica_count       = 2
+    store_password_to_secret_manager = local.store_password_to_secret_manager
+  }
+  mysqldb_custom_credentials_enabled = true
+  mysqldb_custom_credentials_config = {
+    root_user            = "root"
+    root_password        = "RJDRIFsYC8ZS1WQuV0ps"
+    custom_username      = "admin"
+    custom_user_password = "NCPFUKEMd7rrWuvMAa73"
+    replication_user     = "replicator"
+    replication_password = "nvAHhm1uGQNYWVw6ZyAH"
+    exporter_user        = "mysqld_exporter"
+    exporter_password    = "ZawhvpueAehRdKFlbjaq"
   }
   mysqldb_backup_enabled = true
   mysqldb_backup_config = {

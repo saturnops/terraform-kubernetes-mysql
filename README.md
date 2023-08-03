@@ -8,7 +8,7 @@ This module allows you to easily deploy a MySQL database on Kubernetes using Hel
 
 |  MysqlDB Helm Chart Version    |     K8s supported version   |  
 | :-----:                       |         :---                |
-| **9.2.0**                     |    **1.23,1.24,1.25**           |
+| **9.2.0**                     |    **1.23,1.24,1.25,1.26,1.27**           |
 
 
 ## Usage Example
@@ -18,15 +18,27 @@ module "mysql" {
   source                   = "saturnops/mysql/kubernetes"
   cluster_name             = "dev-cluster"
   mysqldb_config = {
-    name                       = "mysql"
-    values_yaml                = ""
-    environment                = "prod"
-    architecture               = "replication"
-    storage_class_name         = "gp3"
-    custom_user_username       = "admin"
-    primary_db_volume_size     = "10Gi"
-    secondary_db_volume_size   = "10Gi"
-    secondary_db_replica_count = 2
+    name                             = "mysql"
+    values_yaml                      = ""
+    environment                      = "prod"
+    architecture                     = "replication"
+    storage_class_name               = "gp3"
+    custom_user_username             = "admin"
+    primary_db_volume_size           = "10Gi"
+    secondary_db_volume_size         = "10Gi"
+    secondary_db_replica_count       = 2
+    store_password_to_secret_manager = true
+  }
+  mysqldb_custom_credentials_enabled = true
+  mysqldb_custom_credentials_config = {
+    root_user            = "root"
+    root_password        = "RJDRIFsYC8ZS1WQuV0ps"
+    custom_username      = "admin"
+    custom_user_password = "NCPFUKEMd7rrWuvMAa73"
+    replication_user     = "replicator"
+    replication_password = "nvAHhm1uGQNYWVw6ZyAH"
+    exporter_user        = "mysqld_exporter"
+    exporter_password    = "ZawhvpueAehRdKFlbjaq"
   }
   mysqldb_backup_enabled   = true
   mysqldb_backup_config = {
@@ -57,7 +69,7 @@ The required IAM permissions to create resources from this module can be found [
   5. To deploy Prometheus/Grafana, please follow the installation instructions for each tool in their respective documentation.
   6. Once Prometheus and Grafana are deployed, the exporter can be configured to scrape metrics data from your application or system and send it to Prometheus.
   7. Finally, you can use Grafana to create custom dashboards and visualize the metrics data collected by Prometheus.
-  8. This module is compatible with EKS version 1.23, which is great news for users deploying the module on an EKS cluster running that version. Review the module's documentation, meet specific configuration requirements, and test thoroughly after deployment to ensure everything works as expected.
+  8. This module is compatible with EKS version 1.23,1.24,1.25,1.26 and 1.27, which is great news for users deploying the module on an EKS cluster running that version. Review the module's documentation, meet specific configuration requirements, and test thoroughly after deployment to ensure everything works as expected.
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -105,7 +117,9 @@ No modules.
 | <a name="input_create_namespace"></a> [create\_namespace](#input\_create\_namespace) | Specify whether or not to create the namespace if it does not already exist. Set it to true to create the namespace. | `string` | `true` | no |
 | <a name="input_mysqldb_backup_config"></a> [mysqldb\_backup\_config](#input\_mysqldb\_backup\_config) | configuration options for MySQL database backups. It includes properties such as the S3 bucket URI, the S3 bucket region, and the cron expression for full backups. | `any` | <pre>{<br>  "cron_for_full_backup": "",<br>  "s3_bucket_region": "",<br>  "s3_bucket_uri": ""<br>}</pre> | no |
 | <a name="input_mysqldb_backup_enabled"></a> [mysqldb\_backup\_enabled](#input\_mysqldb\_backup\_enabled) | Specifies whether to enable backups for MySQL database. | `bool` | `false` | no |
-| <a name="input_mysqldb_config"></a> [mysqldb\_config](#input\_mysqldb\_config) | Specify the configuration settings for MySQL, including the name, environment, storage options, replication settings, and custom YAML values. | `any` | <pre>{<br>  "architecture": "",<br>  "custom_user_username": "",<br>  "environment": "",<br>  "name": "",<br>  "primary_db_volume_size": "",<br>  "secondary_db_replica_count": 1,<br>  "secondary_db_volume_size": "",<br>  "storage_class_name": "",<br>  "values_yaml": ""<br>}</pre> | no |
+| <a name="input_mysqldb_config"></a> [mysqldb\_config](#input\_mysqldb\_config) | Specify the configuration settings for MySQL, including the name, environment, storage options, replication settings, and custom YAML values. | `any` | <pre>{<br>  "architecture": "",<br>  "custom_user_username": "",<br>  "environment": "",<br>  "name": "",<br>  "primary_db_volume_size": "",<br>  "secondary_db_replica_count": 1,<br>  "secondary_db_volume_size": "",<br>  "storage_class_name": "",<br>  "store_password_to_secret_manager": true,<br>  "values_yaml": ""<br>}</pre> | no |
+| <a name="input_mysqldb_custom_credentials_config"></a> [mysqldb\_custom\_credentials\_config](#input\_mysqldb\_custom\_credentials\_config) | Specify the configuration settings for MySQL to pass custom credentials during creation | `any` | <pre>{<br>  "custom_user_password": "",<br>  "custom_username": "",<br>  "exporter_password": "",<br>  "exporter_user": "",<br>  "replication_password": "",<br>  "replication_user": "",<br>  "root_password": "",<br>  "root_user": ""<br>}</pre> | no |
+| <a name="input_mysqldb_custom_credentials_enabled"></a> [mysqldb\_custom\_credentials\_enabled](#input\_mysqldb\_custom\_credentials\_enabled) | Specifies whether to enable custom for MySQL database. | `bool` | `false` | no |
 | <a name="input_mysqldb_exporter_enabled"></a> [mysqldb\_exporter\_enabled](#input\_mysqldb\_exporter\_enabled) | Specify whether or not to deploy Mysql exporter to collect Mysql metrics for monitoring in Grafana. | `bool` | `false` | no |
 | <a name="input_mysqldb_restore_config"></a> [mysqldb\_restore\_config](#input\_mysqldb\_restore\_config) | Configuration options for restoring dump to the MySQL database. | `any` | <pre>{<br>  "s3_bucket_region": "",<br>  "s3_bucket_uri": ""<br>}</pre> | no |
 | <a name="input_mysqldb_restore_enabled"></a> [mysqldb\_restore\_enabled](#input\_mysqldb\_restore\_enabled) | Specifies whether to enable restoring dump to the MySQL database. | `bool` | `false` | no |
@@ -116,7 +130,8 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_mysqldb"></a> [mysqldb](#output\_mysqldb) | Mysql\_Info |
+| <a name="output_mysqldb_credential"></a> [mysqldb\_credential](#output\_mysqldb\_credential) | MySQL credentials used for accessing the MySQL database. |
+| <a name="output_mysqldb_endpoints"></a> [mysqldb\_endpoints](#output\_mysqldb\_endpoints) | MySQL endpoints in the Kubernetes cluster. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 
