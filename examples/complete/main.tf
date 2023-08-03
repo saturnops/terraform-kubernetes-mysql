@@ -25,7 +25,7 @@ module "mysql" {
     secondary_db_replica_count       = 2
     store_password_to_secret_manager = local.store_password_to_secret_manager
   }
-  mysqldb_custom_credentials_enabled = false
+  mysqldb_custom_credentials_enabled = true
   mysqldb_custom_credentials_config = {
     root_user            = ""
     root_password        = ""
