@@ -13,26 +13,36 @@ data "aws_eks_cluster" "kubernetes_cluster" {
 }
 
 resource "aws_secretsmanager_secret" "mysql_user_password" {
+  count                   = var.mysqldb_config.store_password_to_secret_manager ? 1 : 0
   name                    = format("%s/%s/%s", var.mysqldb_config.environment, var.mysqldb_config.name, "mysql")
   recovery_window_in_days = var.recovery_window_aws_secret
 }
 
 resource "aws_secretsmanager_secret_version" "mysql_user_password" {
-  secret_id     = aws_secretsmanager_secret.mysql_user_password.id
-  secret_string = <<EOF
-   {
-    "root_user": "root",
-    "root_password": "${var.root_password}",
-    "custom_username": "${var.mysqldb_config.custom_user_username}",
-    "custom_user_password": "${var.custom_user_password}",
-    "replication_user": "replicator",
-    "replication_password": "${var.replication_password}",
-    "exporter_user": "mysqld_exporter",
-    "exporter_password": "${var.exporter_password}"
-   }
-EOF
+  count     = var.mysqldb_config.store_password_to_secret_manager ? 1 : 0
+  secret_id = aws_secretsmanager_secret.mysql_user_password[0].id
+  secret_string = var.mysqldb_custom_credentials_enabled ? jsonencode(
+    {
+      "root_user" : "${var.mysqldb_custom_credentials_config.root_user}",
+      "root_password" : "${var.mysqldb_custom_credentials_config.root_password}",
+      "custom_username" : "${var.mysqldb_custom_credentials_config.custom_username}",
+      "custom_user_password" : "${var.mysqldb_custom_credentials_config.custom_user_password}",
+      "replication_user" : "${var.mysqldb_custom_credentials_config.replication_user}",
+      "replication_password" : "${var.mysqldb_custom_credentials_config.replication_password}",
+      "exporter_user" : "${var.mysqldb_custom_credentials_config.exporter_user}",
+      "exporter_password" : "${var.mysqldb_custom_credentials_config.exporter_password}"
+    }) : jsonencode(
+    {
+      "root_user" : "root",
+      "root_password" : "${random_password.mysqldb_root_password[0].result}",
+      "custom_username" : "${var.mysqldb_config.custom_user_username}",
+      "custom_user_password" : "${random_password.mysqldb_custom_user_password[0].result}",
+      "replication_user" : "replicator",
+      "replication_password" : "${random_password.mysqldb_replication_user_password[0].result}",
+      "exporter_user" : "mysqld_exporter",
+      "exporter_password" : "${random_password.mysqldb_exporter_user_password[0].result}"
+  })
 }
-
 
 resource "aws_iam_role" "mysql_backup_role" {
   name = format("%s-%s-%s", var.cluster_name, var.mysqldb_config.name, "mysql-backup")

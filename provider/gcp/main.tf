@@ -1,4 +1,5 @@
 resource "google_secret_manager_secret" "mysql-secret" {
+  count     = var.mysqldb_config.store_password_to_secret_manager ? 1 : 0
   project   = var.project_id
   secret_id = format("%s-%s-%s", var.mysqldb_config.environment, var.mysqldb_config.name, "mysql")
 
@@ -8,19 +9,29 @@ resource "google_secret_manager_secret" "mysql-secret" {
 }
 
 resource "google_secret_manager_secret_version" "mysql-secret" {
-  secret      = google_secret_manager_secret.mysql-secret.id
-  secret_data = <<EOF
-   {
-    "root_user": "root",
-    "root_password": "${var.root_password}",
-    "custom_username": "${var.mysqldb_config.custom_user_username}",
-    "custom_user_password": "${var.custom_user_password}",
-    "replication_user": "replicator",
-    "replication_password": "${var.replication_password}",
-    "exporter_user": "mysqld_exporter",
-    "exporter_password": "${var.exporter_password}"
-   }
-EOF
+  count  = var.mysqldb_config.store_password_to_secret_manager ? 1 : 0
+  secret = google_secret_manager_secret.mysql-secret[0].id
+  secret_data = var.mysqldb_custom_credentials_enabled ? jsonencode(
+    {
+      "root_user" : "${var.mysqldb_custom_credentials_config.root_user}",
+      "root_password" : "${var.mysqldb_custom_credentials_config.root_password}",
+      "custom_username" : "${var.mysqldb_custom_credentials_config.custom_username}",
+      "custom_user_password" : "${var.mysqldb_custom_credentials_config.custom_user_password}",
+      "replication_user" : "${var.mysqldb_custom_credentials_config.replication_user}",
+      "replication_password" : "${var.mysqldb_custom_credentials_config.replication_password}",
+      "exporter_user" : "${var.mysqldb_custom_credentials_config.exporter_user}",
+      "exporter_password" : "${var.mysqldb_custom_credentials_config.exporter_password}"
+    }) : jsonencode(
+    {
+      "root_user" : "root",
+      "root_password" : "${random_password.mysqldb_root_password[0].result}",
+      "custom_username" : "${var.mysqldb_config.custom_user_username}",
+      "custom_user_password" : "${random_password.mysqldb_custom_user_password[0].result}",
+      "replication_user" : "replicator",
+      "replication_password" : "${random_password.mysqldb_replication_user_password[0].result}",
+      "exporter_user" : "mysqld_exporter",
+      "exporter_password" : "${random_password.mysqldb_exporter_user_password[0].result}"
+  })
 }
 
 resource "google_service_account" "mysql_backup" {
