@@ -1,7 +1,31 @@
+resource "random_password" "mysqldb_root_password" {
+  count   = var.mysqldb_custom_credentials_enabled ? 0 : 1
+  length  = 20
+  special = false
+}
+
+resource "random_password" "mysqldb_custom_user_password" {
+  count   = var.mysqldb_custom_credentials_enabled ? 0 : 1
+  length  = 20
+  special = false
+}
+
+resource "random_password" "mysqldb_replication_user_password" {
+  count   = var.mysqldb_custom_credentials_enabled ? 0 : 1
+  length  = 20
+  special = false
+}
+
+resource "random_password" "mysqldb_exporter_user_password" {
+  count   = var.mysqldb_custom_credentials_enabled ? 0 : 1
+  length  = 20
+  special = false
+}
+
 resource "google_secret_manager_secret" "mysql-secret" {
-  count     = var.mysqldb_config.store_password_to_secret_manager ? 1 : 0
+  count     = var.store_password_to_secret_manager ? 1 : 0
   project   = var.project_id
-  secret_id = format("%s-%s-%s", var.mysqldb_config.environment, var.mysqldb_config.name, "mysql")
+  secret_id = format("%s-%s-%s", var.environment, var.name, "mysql")
 
   replication {
     automatic = true
@@ -9,7 +33,7 @@ resource "google_secret_manager_secret" "mysql-secret" {
 }
 
 resource "google_secret_manager_secret_version" "mysql-secret" {
-  count  = var.mysqldb_config.store_password_to_secret_manager ? 1 : 0
+  count  = var.store_password_to_secret_manager ? 1 : 0
   secret = google_secret_manager_secret.mysql-secret[0].id
   secret_data = var.mysqldb_custom_credentials_enabled ? jsonencode(
     {
@@ -25,7 +49,7 @@ resource "google_secret_manager_secret_version" "mysql-secret" {
     {
       "root_user" : "root",
       "root_password" : "${random_password.mysqldb_root_password[0].result}",
-      "custom_username" : "${var.mysqldb_config.custom_user_username}",
+      "custom_username" : "${var.custom_user_username}",
       "custom_user_password" : "${random_password.mysqldb_custom_user_password[0].result}",
       "replication_user" : "replicator",
       "replication_password" : "${random_password.mysqldb_replication_user_password[0].result}",
@@ -36,7 +60,7 @@ resource "google_secret_manager_secret_version" "mysql-secret" {
 
 resource "google_service_account" "mysql_backup" {
   project      = var.project_id
-  account_id   = format("%s-%s", var.environment, var.gcp_gsa_backup_name)
+  account_id   = format("%s-%s-%s", var.environment, var.gcp_gsa_backup_name, var.name)
   display_name = "Service Account for Mysql Backup"
 }
 
@@ -60,7 +84,7 @@ resource "google_service_account_iam_member" "pod_identity_backup" {
 
 resource "google_service_account" "mysql_restore" {
   project      = var.project_id
-  account_id   = format("%s-%s", var.environment, var.gcp_gsa_restore_name)
+  account_id   = format("%s-%s-%s", var.environment, var.gcp_gsa_restore_name, var.name)
   display_name = "Service Account for Mysql restore"
 }
 
@@ -80,14 +104,4 @@ resource "google_service_account_iam_member" "pod_identity_restore" {
   role               = "roles/iam.workloadIdentityUser"
   member             = "serviceAccount:${var.project_id}.svc.id.goog[mysqldb/${var.gcp_ksa_restore_name}]"
   service_account_id = google_service_account.mysql_restore.name
-}
-
-output "service_account_backup" {
-  value       = google_service_account.mysql_backup.email
-  description = "Google Cloud Service Account name for backup"
-}
-
-output "service_account_restore" {
-  value       = google_service_account.mysql_restore.email
-  description = "Google Cloud Service Account name for restore"
 }

@@ -12,14 +12,39 @@ data "aws_eks_cluster" "kubernetes_cluster" {
   name = var.cluster_name
 }
 
+resource "random_password" "mysqldb_root_password" {
+  count   = var.mysqldb_custom_credentials_enabled ? 0 : 1
+  length  = 20
+  special = false
+}
+
+resource "random_password" "mysqldb_custom_user_password" {
+  count   = var.mysqldb_custom_credentials_enabled ? 0 : 1
+  length  = 20
+  special = false
+}
+
+resource "random_password" "mysqldb_replication_user_password" {
+  count   = var.mysqldb_custom_credentials_enabled ? 0 : 1
+  length  = 20
+  special = false
+}
+
+resource "random_password" "mysqldb_exporter_user_password" {
+  count   = var.mysqldb_custom_credentials_enabled ? 0 : 1
+  length  = 20
+  special = false
+}
+
+
 resource "aws_secretsmanager_secret" "mysql_user_password" {
-  count                   = var.mysqldb_config.store_password_to_secret_manager ? 1 : 0
-  name                    = format("%s/%s/%s", var.mysqldb_config.environment, var.mysqldb_config.name, "mysql")
+  count                   = var.store_password_to_secret_manager ? 1 : 0
+  name                    = format("%s/%s/%s", var.environment, var.name, "mysql")
   recovery_window_in_days = var.recovery_window_aws_secret
 }
 
 resource "aws_secretsmanager_secret_version" "mysql_user_password" {
-  count     = var.mysqldb_config.store_password_to_secret_manager ? 1 : 0
+  count     = var.store_password_to_secret_manager ? 1 : 0
   secret_id = aws_secretsmanager_secret.mysql_user_password[0].id
   secret_string = var.mysqldb_custom_credentials_enabled ? jsonencode(
     {
@@ -35,7 +60,7 @@ resource "aws_secretsmanager_secret_version" "mysql_user_password" {
     {
       "root_user" : "root",
       "root_password" : "${random_password.mysqldb_root_password[0].result}",
-      "custom_username" : "${var.mysqldb_config.custom_user_username}",
+      "custom_username" : "${var.custom_user_username}",
       "custom_user_password" : "${random_password.mysqldb_custom_user_password[0].result}",
       "replication_user" : "replicator",
       "replication_password" : "${random_password.mysqldb_replication_user_password[0].result}",
@@ -45,7 +70,7 @@ resource "aws_secretsmanager_secret_version" "mysql_user_password" {
 }
 
 resource "aws_iam_role" "mysql_backup_role" {
-  name = format("%s-%s-%s", var.cluster_name, var.mysqldb_config.name, "mysql-backup")
+  name = format("%s-%s-%s", var.cluster_name, var.name, "mysql-backup")
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -88,7 +113,7 @@ resource "aws_iam_role" "mysql_backup_role" {
 
 
 resource "aws_iam_role" "mysql_restore_role" {
-  name = format("%s-%s-%s", var.cluster_name, var.mysqldb_config.name, "mysql-restore")
+  name = format("%s-%s-%s", var.cluster_name, var.name, "mysql-restore")
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -127,14 +152,4 @@ resource "aws_iam_role" "mysql_restore_role" {
       ]
     })
   }
-}
-
-output "iam_role_arn_backup" {
-  value       = aws_iam_role.mysql_backup_role.arn
-  description = "IAM role arn for mysql backup"
-}
-
-output "iam_role_arn_restore" {
-  value       = aws_iam_role.mysql_restore_role.arn
-  description = "IAM role arn for mysql restore"
 }

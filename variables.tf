@@ -121,3 +121,51 @@ variable "project_id" {
   type        = string
   default     = ""
 }
+
+variable "iam_role_arn_backup" {
+  description = "IAM role ARN for backup (AWS)"
+  type        = string
+  default     = ""
+}
+
+variable "service_account_backup" {
+  description = "Service account for backup (GCP)"
+  type        = string
+  default     = ""
+}
+
+variable "iam_role_arn_restore" {
+  description = "IAM role ARN for restore (AWS)"
+  type        = string
+  default     = ""
+}
+
+variable "service_account_restore" {
+  description = "Service account for restore (GCP)"
+  type        = string
+  default     = ""
+}
+
+variable "root_password" {
+  description = "Root password for MongoDB"
+  type        = string
+  default     = ""
+}
+
+variable "metric_exporter_pasword" {
+  description = "Metric exporter password for MongoDB"
+  type        = string
+  default     = ""
+}
+
+variable "custom_user_password" {
+  description = "custom user password for MongoDB"
+  type        = string
+  default     = ""
+}
+
+variable "mysqldb_replication_user_password" {
+  description = "Replicator password for MongoDB"
+  type        = string
+  default     = ""
+}
