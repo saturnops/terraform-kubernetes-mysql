@@ -42,7 +42,7 @@ module "mysql" {
     environment                      = "prod"
     architecture                     = "replication"
     storage_class_name               = "gp3"
-    custom_user_username             = local.mysqldb_custom_credentials_enabled ? "" : local.custom_user_username
+    custom_user_username             = "admin"
     primary_db_volume_size           = "10Gi"
     secondary_db_volume_size         = "10Gi"
     secondary_db_replica_count       = 2
