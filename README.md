@@ -2,11 +2,11 @@
 
 
 <br>
-This module allows you to easily deploy a MySQL database on Kubernetes using Helm. It provides flexible configuration options for the MySQL database, including storage class, database volume sizes, and architecture. In addition, it supports enabling backups and restoring from backups, as well as deploying MySQL database exporters to gather metrics for Grafana. This module is designed to be highly configurable and customizable, and can be easily integrated into your existing Terraform infrastructure code.
+This module simplifies deploying a <strong>MySQL database</strong> on Kubernetes with flexible configuration options, including storage class, volume sizes, and architecture. It supports <strong>backups</strong>, <strong>restores</strong>, and deploying exporters for <strong>Grafana metrics</strong>.<br><br> It can create namespaces and configure recovery windows for <strong>AWS Secrets Manager</strong>, <strong>Azure Key Vault</strong>, and <strong>GCP Secrets Manager</strong>. This module enables easy deployment of highly available <strong>MySQL databases</strong> on <strong>AWS EKS</strong>, <strong>Azure AKS</strong>, and <strong>GCP GKE</strong> with extensive customization options.
 
 ## Supported Versions:
 
-|  MysqlDB Helm Chart Version    |     K8s supported version   |  
+|  MysqlDB Helm Chart Version    |     K8s supported version (EKS, AKS & GKE)  |  
 | :-----:                       |         :---                |
 | **9.2.0**                     |    **1.23,1.24,1.25,1.26,1.27**           |
 
@@ -57,7 +57,9 @@ module "mysql" {
 
 
 ```
-Refer [examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete) for more details.
+Refer [AWS examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete/aws) for more details
+Refer [Azure examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete/azure) for more details
+Refer [GCP examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete/gcp) for more details
 
 ## IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/saturnops/terraform-kubernetes-mysql/blob/main/IAM.md)
