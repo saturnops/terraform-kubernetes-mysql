@@ -31,14 +31,14 @@ module "aws" {
     exporter_user        = "mysqld_exporter"
     exporter_password    = "ZawhvpueAehRdKFlbjaq"
   }
-  custom_user_username               = local.mysqldb_custom_credentials_enabled ? "" : local.custom_user_username
+  custom_user_username               = mysqldb_custom_credentials_enabled ? "" : "custome_username"
 }
 
 module "mysql" {
   source = "saturnops/mysql/kubernetes"
   mysqldb_config = {
     name                             = "mysql"
-    values_yaml                      = file("./helm/values.yaml")
+    values_yaml                      = ""
     environment                      = "prod"
     architecture                     = "replication"
     storage_class_name               = "gp3"
@@ -59,24 +59,24 @@ module "mysql" {
     exporter_user        = "mysqld_exporter"
     exporter_password    = "ZawhvpueAehRdKFlbjaq"
   }
-  root_password                      = local.mysqldb_custom_credentials_enabled ? "" : module.aws.root_password
-  metric_exporter_pasword            = local.mysqldb_custom_credentials_enabled ? "" : module.aws.metric_exporter_pasword
-  mysqldb_replication_user_password  = local.mysqldb_custom_credentials_enabled ? "" : module.aws.mysqldb_replication_user_password
-  custom_user_password               = local.mysqldb_custom_credentials_enabled ? "" : module.aws.custom_user_password
+  root_password                      = mysqldb_custom_credentials_enabled ? "" : module.aws.root_password
+  metric_exporter_pasword            = mysqldb_custom_credentials_enabled ? "" : module.aws.metric_exporter_pasword
+  mysqldb_replication_user_password  = mysqldb_custom_credentials_enabled ? "" : module.aws.mysqldb_replication_user_password
+  custom_user_password               = mysqldb_custom_credentials_enabled ? "" : module.aws.custom_user_password
   bucket_provider_type               = "s3"
   iam_role_arn_backup                = module.aws.iam_role_arn_backup
   mysqldb_backup_enabled             = true
   mysqldb_backup_config = {
-    bucket_uri           = "s3://bucket_name"
-    s3_bucket_region     = ""
-    cron_for_full_backup = "*/5 * * * *"
+    bucket_uri           = "backup-bucket-uri"
+    s3_bucket_region     = "backup-bucket-region"
+    cron_for_full_backup = "* */12 * * *"
   }
   mysqldb_restore_enabled = true
   iam_role_arn_restore    = module.aws.iam_role_arn_restore
   mysqldb_restore_config = {
-    bucket_uri       = "s3://bucket_name/mysqldump_20230710_120501.zip"
-    file_name        = "mysqldump_20230710_120501.zip"
-    s3_bucket_region = ""
+    bucket_uri       = "restore-bucket-uri/restore-file-name"
+    file_name        = "restore-file-name"
+    s3_bucket_region = "restore-bucket-region"
   }
   mysqldb_exporter_enabled = true
 }
