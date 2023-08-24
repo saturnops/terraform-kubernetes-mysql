@@ -1,4 +1,4 @@
-## IAM Permission
+## AWS IAM Permission
 
 The Policy required to deploy this module:
 ```hcl
@@ -49,4 +49,37 @@ The Policy required to deploy this module:
         }
     ]
 }
+```
+## Azure Role Permissions
+
+```hcl
+  permissions {
+    actions = [
+    "Microsoft.Authorization/roleAssignments/delete",
+    "Microsoft.Authorization/roleAssignments/read",
+    "Microsoft.Authorization/roleAssignments/write",
+    "Microsoft.KeyVault/locations/deletedVaults/read",
+    "Microsoft.KeyVault/vaults/delete",
+    "Microsoft.KeyVault/vaults/read",
+    "Microsoft.KeyVault/vaults/write",
+    "Microsoft.ManagedIdentity/userAssignedIdentities/delete",
+    "Microsoft.ManagedIdentity/userAssignedIdentities/read",
+    "Microsoft.ManagedIdentity/userAssignedIdentities/write",
+    "Microsoft.Resources/subscriptions/providers/read",
+    "Microsoft.Resources/subscriptions/resourcegroups/read"]
+    not_actions = []
+  }
+```
+
+## GCP IAM Permissions
+
+```hcl
+permissions = [
+    "iam.serviceAccounts.create",
+    "iam.serviceAccounts.delete",
+    "iam.serviceAccounts.get",
+    "iam.serviceAccounts.update",
+    "resourcemanager.projects.getIamPolicy",
+    "resourcemanager.projects.setIamPolicy"
+  ]
 ```
