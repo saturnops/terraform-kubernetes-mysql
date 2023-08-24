@@ -57,9 +57,9 @@ module "mysql" {
 
 
 ```
-Refer [AWS examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete/aws) for more details
-Refer [Azure examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete/azure) for more details
-Refer [GCP examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete/gcp) for more details
+- Refer [AWS examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete/aws) for more details.
+- Refer [Azure examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete/azure) for more details.
+- Refer [GCP examples](https://github.com/saturnops/terraform-kubernetes-mysql/tree/main/examples/complete/gcp) for more details.
 
 ## IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/saturnops/terraform-kubernetes-mysql/blob/main/IAM.md)
