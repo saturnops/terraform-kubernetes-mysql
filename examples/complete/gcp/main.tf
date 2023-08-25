@@ -23,7 +23,7 @@ locals {
 }
 
 module "gcp" {
-  source                             = "saturnops/mysql/kubernetes//provider/gcp"
+  source                             = "saturnops/mysql/kubernetes//modules/resources/gcp"
   project_id                         = "fresh-sanctuary-387476" #for gcp
   environment                        = local.environment
   name                               = local.name
