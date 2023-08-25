@@ -15,7 +15,7 @@ This module simplifies deploying a <strong>MySQL database</strong> on Kubernetes
 
 ```hcl
 module "aws" {
-  source                             = "saturnops/mysql/kubernetes//provider/aws"
+  source                             = "saturnops/mysql/kubernetes//modules/resources/aws"
   cluster_name                       = "prod-eks"
   environment                        = "prod"
   name                               = "mysql"

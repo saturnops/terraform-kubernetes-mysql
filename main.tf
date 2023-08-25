@@ -38,7 +38,7 @@ resource "helm_release" "mysqldb_backup" {
   depends_on = [helm_release.mysqldb]
   count      = var.mysqldb_backup_enabled ? 1 : 0
   name       = "mysqldb-backup"
-  chart      = "${path.module}/backup"
+  chart      = "${path.module}/modules/backup"
   timeout    = 600
   namespace  = var.namespace
   values = [
@@ -62,7 +62,7 @@ resource "helm_release" "mysqldb_restore" {
   depends_on = [helm_release.mysqldb]
   count      = var.mysqldb_restore_enabled ? 1 : 0
   name       = "mysqldb-restore"
-  chart      = "${path.module}/restore"
+  chart      = "${path.module}/modules/restore"
   timeout    = 600
   namespace  = var.namespace
   values = [

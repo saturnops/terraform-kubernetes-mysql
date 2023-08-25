@@ -25,7 +25,7 @@ locals {
 }
 
 module "azure" {
-  source                             = "saturnops/mysql/kubernetes//provider/azure"
+  source                             = "saturnops/mysql/kubernetes//modules/resources/azure"
   cluster_name                       = ""
   resource_group_name                = ""
   resource_group_location            = ""
