@@ -5,6 +5,7 @@ variable "mysqldb_config" {
     environment                      = ""
     values_yaml                      = ""
     architecture                     = ""
+    custom_database                  = ""
     storage_class_name               = ""
     custom_user_username             = ""
     primary_db_volume_size           = ""

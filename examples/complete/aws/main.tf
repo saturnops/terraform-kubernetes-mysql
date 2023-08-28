@@ -7,8 +7,10 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
-  store_password_to_secret_manager   = true
-  mysqldb_custom_credentials_enabled = false
+  create_namespace                   = false
+  namespace                          = ""
+  store_password_to_secret_manager   = false
+  mysqldb_custom_credentials_enabled = true
   mysqldb_custom_credentials_config = {
     root_user            = "root"
     root_password        = "RJDRIFsYC8ZS1WQuV0ps"
@@ -24,7 +26,7 @@ locals {
 
 module "aws" {
   source                             = "saturnops/mysql/kubernetes//modules/resources/aws"
-  cluster_name                       = ""
+  cluster_name                       = "cluster-name"
   environment                        = local.environment
   name                               = local.name
   store_password_to_secret_manager   = local.store_password_to_secret_manager
@@ -34,13 +36,17 @@ module "aws" {
 }
 
 module "mysql" {
-  source = "saturnops/mysql/kubernetes"
+  source           = "saturnops/mysql/kubernetes/"
+  create_namespace = local.create_namespace
+  namespace        = local.namespace
   mysqldb_config = {
     name                             = local.name
     values_yaml                      = file("./helm/values.yaml")
+    app_version                      = "8.0.29-debian-11-r9"
     environment                      = local.environment
     architecture                     = "replication"
-    storage_class_name               = "gp3"
+    custom_database                  = "test_db"
+    storage_class_name               = "gp2"
     custom_user_username             = local.mysqldb_custom_credentials_enabled ? "" : local.custom_user_username
     primary_db_volume_size           = "10Gi"
     secondary_db_volume_size         = "10Gi"
