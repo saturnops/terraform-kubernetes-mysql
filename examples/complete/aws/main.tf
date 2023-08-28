@@ -7,8 +7,8 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
-  create_namespace                   = false
-  namespace                          = ""
+  create_namespace                   = true
+  namespace                          = "mysql"
   store_password_to_secret_manager   = false
   mysqldb_custom_credentials_enabled = true
   mysqldb_custom_credentials_config = {

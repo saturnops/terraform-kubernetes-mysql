@@ -39,7 +39,7 @@ module "mysql" {
   source           = "saturnops/mysql/kubernetes"
   create_namespace = local.create_namespace
   namespace        = local.namespace
-  mysqldb_config   = {
+  mysqldb_config = {
     name                             = local.name
     values_yaml                      = file("./helm/values.yaml")
     environment                      = local.environment

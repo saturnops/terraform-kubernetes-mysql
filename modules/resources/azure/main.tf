@@ -54,7 +54,7 @@ resource "azurerm_key_vault" "mysql-secret" {
 }
 
 resource "azurerm_key_vault_secret" "mysql-secret" {
-  count  = var.store_password_to_secret_manager ? 1 : 0
+  count      = var.store_password_to_secret_manager ? 1 : 0
   depends_on = [azurerm_key_vault.mysql-secret[0]]
   name       = format("%s-%s-%s", var.environment, var.name, "secret")
   value = var.mysqldb_custom_credentials_enabled ? jsonencode(
