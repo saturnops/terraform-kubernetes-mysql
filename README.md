@@ -62,12 +62,13 @@ module "aws" {
 
 module "mysql" {
   source           = "saturnops/mysql/kubernetes"
-  create_namespace = false
-  namespace        = "prod"
+  create_namespace = local.create_namespace
+  namespace        = local.namespace
   mysqldb_config = {
     name                             = "mysql"
     app_version                      = "8.0.29-debian-11-r9"
     environment                      = "prod"
+    values_yaml                      = ""
     architecture                     = "replication"
     custom_database                  = "test_db"
     storage_class_name               = "gp2"
