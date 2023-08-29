@@ -7,6 +7,8 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
+  create_namespace                   = true
+  namespace                          = "mysql"
   store_password_to_secret_manager   = true
   mysqldb_custom_credentials_enabled = false
   mysqldb_custom_credentials_config = {
@@ -34,12 +36,16 @@ module "gcp" {
 }
 
 module "mysql" {
-  source = "saturnops/mysql/kubernetes"
+  source           = "saturnops/mysql/kubernetes"
+  create_namespace = local.create_namespace
+  namespace        = local.namespace
   mysqldb_config = {
     name                             = local.name
     values_yaml                      = file("./helm/values.yaml")
     environment                      = local.environment
+    app_version                      = "8.0.29-debian-11-r9"
     architecture                     = "replication"
+    custom_database                  = "test_db"
     storage_class_name               = "standard"
     custom_user_username             = local.mysqldb_custom_credentials_enabled ? "" : local.custom_user_username
     primary_db_volume_size           = "10Gi"
