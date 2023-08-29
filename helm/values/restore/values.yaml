@@ -1,9 +1,12 @@
 restore:
-  bucket_uri: ${s3_bucket_uri}
+  bucket_uri: ${bucket_uri}
+  file_name: ${file_name}
   aws_default_region: ${s3_bucket_region}
 
 auth:
   username: "${custom_user_username}"
 
-s3:
-  role_arn: "${s3_role_arn}"
+annotations:
+  ${annotations}
+
+bucket_provider_type: ${bucket_provider_type}

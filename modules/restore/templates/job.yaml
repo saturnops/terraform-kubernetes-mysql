@@ -8,7 +8,8 @@ spec:
       serviceAccountName: sa-mysql-restore
       containers:
           - name: restore-mysqldb
-            image: saturnops01/mysqlrestore:latest
+            image: saturnops/mysqldb-restore:v3
+            imagePullPolicy: Always
             env:
             - name: MYSQL_HOST
               value: mysqldb-primary-headless.{{ .Release.Namespace }}.svc.cluster.local
@@ -19,15 +20,16 @@ spec:
                 secretKeyRef:
                     name: mysqldb
                     key: mysql-root-password
-            - name: MYSQL_BUCKET_URI
+            - name: MYSQL_BUCKET_RESTORE_URI
               valueFrom:
                 secretKeyRef:
                   name: mysql-bucket-uri-restore
                   key: MYSQL_BUCKET_URI
+            - name: RESTORE_FILE_NAME
+              value: {{ .Values.restore.file_name}}
+            - name: RESTORE_FROM
+              value: {{ .Values.bucket_provider_type}}
             - name: AWS_DEFAULT_REGION
-              valueFrom:
-                secretKeyRef:
-                  name: aws-mysql-restore
-                  key: AWS_DEFAULT_REGION
+              value: {{ .Values.restore.aws_default_region}}
       restartPolicy: Never
   backoffLimit: 4

@@ -5,6 +5,7 @@ variable "mysqldb_config" {
     environment                      = ""
     values_yaml                      = ""
     architecture                     = ""
+    custom_database                  = ""
     storage_class_name               = ""
     custom_user_username             = ""
     primary_db_volume_size           = ""
@@ -62,7 +63,7 @@ variable "mysqldb_backup_enabled" {
 variable "mysqldb_backup_config" {
   type = any
   default = {
-    s3_bucket_uri        = ""
+    bucket_uri           = ""
     s3_bucket_region     = ""
     cron_for_full_backup = ""
   }
@@ -102,8 +103,99 @@ variable "mysqldb_restore_enabled" {
 variable "mysqldb_restore_config" {
   type = any
   default = {
-    s3_bucket_uri    = ""
+    bucket_uri       = ""
+    file_name        = ""
     s3_bucket_region = ""
   }
   description = "Configuration options for restoring dump to the MySQL database."
+}
+
+variable "bucket_provider_type" {
+  type        = string
+  default     = "gcs"
+  description = "Choose what type of provider you want (s3, gcs)"
+}
+
+
+variable "project_id" {
+  description = "Google Cloud project ID"
+  type        = string
+  default     = ""
+}
+
+variable "iam_role_arn_backup" {
+  description = "IAM role ARN for backup (AWS)"
+  type        = string
+  default     = ""
+}
+
+variable "service_account_backup" {
+  description = "Service account for backup (GCP)"
+  type        = string
+  default     = ""
+}
+
+variable "iam_role_arn_restore" {
+  description = "IAM role ARN for restore (AWS)"
+  type        = string
+  default     = ""
+}
+
+variable "service_account_restore" {
+  description = "Service account for restore (GCP)"
+  type        = string
+  default     = ""
+}
+
+variable "root_password" {
+  description = "Root password for MongoDB"
+  type        = string
+  default     = ""
+}
+
+variable "metric_exporter_pasword" {
+  description = "Metric exporter password for MongoDB"
+  type        = string
+  default     = ""
+}
+
+variable "custom_user_password" {
+  description = "custom user password for MongoDB"
+  type        = string
+  default     = ""
+}
+
+variable "mysqldb_replication_user_password" {
+  description = "Replicator password for MongoDB"
+  type        = string
+  default     = ""
+}
+
+variable "resource_group_name" {
+  description = "Azure Resource Group name"
+  type        = string
+  default     = ""
+}
+
+variable "resource_group_location" {
+  description = "Azure region"
+  type        = string
+  default     = "East US"
+}
+variable "azure_storage_account_name" {
+  description = "Azure storage account name"
+  type        = string
+  default     = ""
+}
+
+variable "azure_storage_account_key" {
+  description = "Azure storage account key"
+  type        = string
+  default     = ""
+}
+
+variable "azure_container_name" {
+  description = "Azure container name"
+  type        = string
+  default     = ""
 }
