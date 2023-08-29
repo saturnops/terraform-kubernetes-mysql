@@ -36,7 +36,7 @@ module "aws" {
 }
 
 module "mysql" {
-  source           = "saturnops/mysql/kubernetes/"
+  source           = "saturnops/mysql/kubernetes"
   create_namespace = local.create_namespace
   namespace        = local.namespace
   mysqldb_config = {
