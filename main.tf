@@ -27,7 +27,7 @@ resource "helm_release" "mysqldb" {
       replication_password        = var.mysqldb_custom_credentials_enabled ? var.mysqldb_custom_credentials_config.replication_password : var.mysqldb_replication_user_password,
       mysqldb_root_password       = var.mysqldb_custom_credentials_enabled ? var.mysqldb_custom_credentials_config.root_password : var.root_password,
       mysqldb_exporter_enabled    = var.mysqldb_exporter_enabled,
-      service_monitor_namespace   = var.namespace
+      service_monitor_namespace   = var.namespace,
       metrics_exporter_password   = var.mysqldb_custom_credentials_enabled ? var.mysqldb_custom_credentials_config.exporter_password : var.metric_exporter_pasword,
       secondary_pod_replica_count = var.mysqldb_config.secondary_db_replica_count
     }),
