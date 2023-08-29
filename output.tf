@@ -2,10 +2,10 @@ output "mysqldb_endpoints" {
   description = "MySQL endpoints in the Kubernetes cluster."
   value = {
     mysqlport                         = "3306",
-    mysql_primary_endpoint            = var.create_namespace ? "mysqldb-primary.${var.namespace}.svc.cluster.local" : "mysqldb-primary.default.svc.cluster.local",
-    mysql_primary_headless_endpoint   = var.create_namespace ? "mysqldb-primary-headless.${var.namespace}.svc.cluster.local" : "mysqldb-primary-headless.default.svc.cluster.local",
-    mysql_secondary_endpoint          = var.create_namespace ? "mysqldb-secondary.${var.namespace}.svc.cluster.local" : "mysqldb-secondary.default.svc.cluster.local",
-    mysql_secondary_headless_endpoint = var.create_namespace ? "mysqldb-secondary-headless.${var.namespace}.svc.cluster.local" : "mysqldb-secondary-headless.default.svc.cluster.local",
+    mysql_primary_endpoint            = "mysqldb-primary.${var.namespace}.svc.cluster.local",
+    mysql_primary_headless_endpoint   = "mysqldb-primary-headless.${var.namespace}.svc.cluster.local",
+    mysql_secondary_endpoint          = "mysqldb-secondary.${var.namespace}.svc.cluster.local",
+    mysql_secondary_headless_endpoint = "mysqldb-secondary-headless.${var.namespace}.svc.cluster.local"
   }
 }
 

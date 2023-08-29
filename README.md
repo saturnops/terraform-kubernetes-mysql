@@ -14,6 +14,32 @@ This module simplifies deploying a <strong>MySQL database</strong> on Kubernetes
 ## Usage Example
 
 ```hcl
+locals {
+  name        = "mysql"
+  region      = "us-east-2"
+  environment = "prod"
+  additional_tags = {
+    Owner      = "organization_name"
+    Expires    = "Never"
+    Department = "Engineering"
+  }
+  create_namespace                   = true
+  namespace                          = "mysql"
+  store_password_to_secret_manager   = false
+  mysqldb_custom_credentials_enabled = true
+  mysqldb_custom_credentials_config = {
+    root_user            = "root"
+    root_password        = "RJDRIFsYC8ZS1WQuV0ps"
+    custom_username      = "admin"
+    custom_user_password = "NCPFUKEMd7rrWuvMAa73"
+    replication_user     = "replicator"
+    replication_password = "nvAHhm1uGQNYWVw6ZyAH"
+    exporter_user        = "mysqld_exporter"
+    exporter_password    = "ZawhvpueAehRdKFlbjaq"
+  }
+  custom_user_username = "custom"
+}
+
 module "aws" {
   source                             = "saturnops/mysql/kubernetes//modules/resources/aws"
   cluster_name                       = "prod-eks"
@@ -36,13 +62,12 @@ module "aws" {
 
 module "mysql" {
   source           = "saturnops/mysql/kubernetes/"
-  create_namespace = local.create_namespace
-  namespace        = local.namespace
+  create_namespace = false
+  namespace        = "prod"
   mysqldb_config = {
-    name                             = local.name
-    values_yaml                      = file("./helm/values.yaml")
+    name                             = "mysql"
     app_version                      = "8.0.29-debian-11-r9"
-    environment                      = local.environment
+    environment                      = "prod"
     architecture                     = "replication"
     custom_database                  = "test_db"
     storage_class_name               = "gp2"
@@ -50,7 +75,7 @@ module "mysql" {
     primary_db_volume_size           = "10Gi"
     secondary_db_volume_size         = "10Gi"
     secondary_db_replica_count       = 2
-    store_password_to_secret_manager = local.store_password_to_secret_manager
+    store_password_to_secret_manager = true
   }
   mysqldb_custom_credentials_enabled = local.mysqldb_custom_credentials_enabled
   mysqldb_custom_credentials_config  = local.mysqldb_custom_credentials_config

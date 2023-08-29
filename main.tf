@@ -12,7 +12,7 @@ resource "helm_release" "mysqldb" {
   chart      = "mysql"
   version    = var.chart_version
   timeout    = 600
-  namespace  = var.create_namespace ? var.namespace : "default"
+  namespace  = var.namespace
   repository = "https://charts.bitnami.com/bitnami"
   values = [
     templatefile("${path.module}/helm/values/mysqldb/values.yaml", {
@@ -27,7 +27,7 @@ resource "helm_release" "mysqldb" {
       replication_password        = var.mysqldb_custom_credentials_enabled ? var.mysqldb_custom_credentials_config.replication_password : var.mysqldb_replication_user_password,
       mysqldb_root_password       = var.mysqldb_custom_credentials_enabled ? var.mysqldb_custom_credentials_config.root_password : var.root_password,
       mysqldb_exporter_enabled    = var.mysqldb_exporter_enabled,
-      service_monitor_namespace   = var.create_namespace ? var.namespace : "default"
+      service_monitor_namespace   = var.namespace
       metrics_exporter_password   = var.mysqldb_custom_credentials_enabled ? var.mysqldb_custom_credentials_config.exporter_password : var.metric_exporter_pasword,
       secondary_pod_replica_count = var.mysqldb_config.secondary_db_replica_count
     }),
@@ -41,7 +41,7 @@ resource "helm_release" "mysqldb_backup" {
   name       = "mysqldb-backup"
   chart      = "${path.module}/modules/backup"
   timeout    = 600
-  namespace  = var.create_namespace ? var.namespace : "default"
+  namespace  = var.namespace
   values = [
     templatefile("${path.module}/helm/values/backup/values.yaml", {
       bucket_uri                 = var.mysqldb_backup_config.bucket_uri,
@@ -65,7 +65,7 @@ resource "helm_release" "mysqldb_restore" {
   name       = "mysqldb-restore"
   chart      = "${path.module}/modules/restore"
   timeout    = 600
-  namespace  = var.create_namespace ? var.namespace : "default"
+  namespace  = var.namespace
   values = [
     templatefile("${path.module}/helm/values/restore/values.yaml", {
       bucket_uri                 = var.mysqldb_restore_config.bucket_uri,
