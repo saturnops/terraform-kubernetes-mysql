@@ -29,6 +29,7 @@ module "aws" {
   cluster_name                       = "cluster-name"
   environment                        = local.environment
   name                               = local.name
+  namespace                          = local.namespace
   store_password_to_secret_manager   = local.store_password_to_secret_manager
   mysqldb_custom_credentials_enabled = local.mysqldb_custom_credentials_enabled
   mysqldb_custom_credentials_config  = local.mysqldb_custom_credentials_config
