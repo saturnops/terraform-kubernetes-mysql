@@ -5,6 +5,7 @@ metadata:
 spec:
   template:
     spec:
+      affinity: {{ .Values.affinity | toYaml | nindent 6 }}
       serviceAccountName: sa-mysql-restore
       containers:
           - name: restore-mysqldb
@@ -31,5 +32,6 @@ spec:
               value: {{ .Values.bucket_provider_type}}
             - name: AWS_DEFAULT_REGION
               value: {{ .Values.restore.aws_default_region}}
+            resources: {{ .Values.restorejob.resources | toYaml | nindent 12 }}
       restartPolicy: Never
   backoffLimit: 4
