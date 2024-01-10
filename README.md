@@ -45,6 +45,7 @@ module "aws" {
   cluster_name                       = "prod-eks"
   environment                        = "prod"
   name                               = "mysql"
+  namespace                          = local.namespace
   store_password_to_secret_manager   = true
   mysqldb_custom_credentials_enabled = true
   mysqldb_custom_credentials_config  = {
