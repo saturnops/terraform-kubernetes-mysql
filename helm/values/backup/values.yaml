@@ -12,3 +12,22 @@ auth:
   username: "${custom_user_username}"
 
 bucket_provider_type: ${bucket_provider_type}
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: "Infra-Services"
+          operator: In
+          values:
+          - "true"
+
+backupjob:
+  resources:
+    requests:
+      memory: 100Mi
+      cpu: 50m
+    limits:
+      memory: 200Mi
+      cpu: 100m
