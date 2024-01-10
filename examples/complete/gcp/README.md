@@ -19,7 +19,7 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_gcp"></a> [gcp](#module\_gcp) | saturnops/mysql/kubernetes//provider/gcp | n/a |
+| <a name="module_gcp"></a> [gcp](#module\_gcp) | saturnops/mysql/kubernetes//modules/resources/gcp | n/a |
 | <a name="module_mysql"></a> [mysql](#module\_mysql) | saturnops/mysql/kubernetes | n/a |
 
 ## Resources
