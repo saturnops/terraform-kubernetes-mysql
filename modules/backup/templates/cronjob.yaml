@@ -20,7 +20,7 @@ spec:
           serviceAccountName: sa-mysql-backup
           containers:
           - name: backup-mysqldb
-            image: saturnops/mysqldb-backup:v4
+            image: saturnops/mysqldb-backup:v5
             imagePullPolicy: Always
             env:
             - name: MYSQL_HOST
