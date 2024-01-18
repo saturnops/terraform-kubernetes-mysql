@@ -3,6 +3,7 @@ backup:
   bucket_uri: ${bucket_uri}
   aws_default_region: ${s3_bucket_region}
   cron_for_full_backup: "${cron_for_full_backup}"
+  database_name: "${mysql_database_name}"
 
 
 annotations:

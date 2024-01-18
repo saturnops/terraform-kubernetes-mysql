@@ -64,14 +64,15 @@ module "mysql" {
   iam_role_arn_backup                = module.aws.iam_role_arn_backup
   mysqldb_backup_enabled             = true
   mysqldb_backup_config = {
-    bucket_uri           = "s3://bucket_name"
+    mysql_database_name  = ""
+    bucket_uri           = "s3://bucket_name/backup/"
     s3_bucket_region     = ""
     cron_for_full_backup = "*/5 * * * *"
   }
   mysqldb_restore_enabled = true
   iam_role_arn_restore    = module.aws.iam_role_arn_restore
   mysqldb_restore_config = {
-    bucket_uri       = "s3://bucket_name/mysqldump_20230710_120501.zip"
+    bucket_uri       = "s3://bucket_name/backup/mysqldump_20230710_120501.zip"
     file_name        = "mysqldump_20230710_120501.zip"
     s3_bucket_region = ""
   }

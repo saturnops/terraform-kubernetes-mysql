@@ -45,6 +45,7 @@ resource "helm_release" "mysqldb_backup" {
   values = [
     templatefile("${path.module}/helm/values/backup/values.yaml", {
       bucket_uri                 = var.mysqldb_backup_config.bucket_uri,
+      mysql_database_name        = var.bucket_provider_type == "s3" ? var.mysqldb_backup_config.mysql_database_name : "",
       s3_bucket_region           = var.bucket_provider_type == "s3" ? var.mysqldb_backup_config.s3_bucket_region : "",
       cron_for_full_backup       = var.mysqldb_backup_config.cron_for_full_backup,
       custom_user_username       = "root",
