@@ -66,8 +66,9 @@ variable "mysqldb_backup_config" {
     bucket_uri           = ""
     s3_bucket_region     = ""
     cron_for_full_backup = ""
+    mysql_database_name  = ""
   }
-  description = "configuration options for MySQL database backups. It includes properties such as the S3 bucket URI, the S3 bucket region, and the cron expression for full backups."
+  description = "configuration options for MySQL database backups. It includes properties such as the S3 bucket URI, the S3 bucket region, cron expression for full backups and the database name to take backup of particular database or if send empty it backup whole database "
 }
 
 variable "mysqldb_exporter_enabled" {

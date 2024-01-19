@@ -64,7 +64,8 @@ module "mysql" {
   iam_role_arn_backup                = module.aws.iam_role_arn_backup
   mysqldb_backup_enabled             = true
   mysqldb_backup_config = {
-    bucket_uri           = "s3://bucket_name"
+    mysql_database_name  = ""
+    bucket_uri           = "s3://bucket_name/"
     s3_bucket_region     = ""
     cron_for_full_backup = "*/5 * * * *"
   }
