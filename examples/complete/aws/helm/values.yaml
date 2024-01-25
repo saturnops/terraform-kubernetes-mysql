@@ -1,35 +1,81 @@
 primary:
-    affinity:
-        nodeAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-                nodeSelectorTerms:
-                - matchExpressions:
-                    - key: "Infra-Services"
-                      operator: In
-                      values:
-                      - "true"
+  affinity:
+      nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "Infra-Services"
+                    operator: In
+                    values:
+                    - "true"
+  resources:
+      limits:
+          cpu: 350m
+          memory: 1Gi
+      requests:
+          cpu: 200m
+          memory: 700Mi
+
+  sidecars:
+    - name: slow-log
+      image: busybox:1.28
+      args: [/bin/sh, -c, 'tail -n+1 -F /bitnami/mysql/slow-log.log']
+      volumeMounts:
+      - name: data
+        mountPath: /bitnami/mysql
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 55m
+          memory: 156Mi
 
 secondary:
-    affinity:
-        nodeAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-                nodeSelectorTerms:
-                - matchExpressions:
-                    - key: "Infra-Services"
-                      operator: In
-                      values:
-                      - "true"
+  affinity:
+      nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "Infra-Services"
+                    operator: In
+                    values:
+                    - "true"
 
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: "Infra-Services"
-            operator: In
-            values:
-            - "true"
-backupjob:
+  resources:
+      limits:
+          cpu: 350m
+          memory: 1Gi
+      requests:
+          cpu: 200m
+          memory: 700Mi
+
+  sidecars:
+    - name: slow-log
+      image: busybox:1.28
+      args: [/bin/sh, -c, 'tail -n+1 -F /bitnami/mysql/slow-log.log']
+      volumeMounts:
+      - name: data
+        mountPath: /bitnami/mysql
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 55m
+          memory: 156Mi
+
+metrics:
+  resources:
+    limits:
+        cpu: 200m
+        memory: 500Mi
+    requests:
+        cpu: 10m
+        memory: 50Mi
+
+
+backup:
   resources:
     requests:
       memory: 100Mi
@@ -38,7 +84,7 @@ backupjob:
       memory: 200Mi
       cpu: 100m
 
-restorejob:
+restore:
   resources:
     requests:
       memory: 100Mi
