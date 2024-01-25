@@ -75,7 +75,7 @@ metrics:
         memory: 50Mi
 
 
-backup:
+backupjob:
   resources:
     requests:
       memory: 100Mi
@@ -84,7 +84,7 @@ backup:
       memory: 200Mi
       cpu: 100m
 
-restore:
+restorejob:
   resources:
     requests:
       memory: 100Mi
