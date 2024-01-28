@@ -28,8 +28,8 @@ primary:
           cpu: 100m
           memory: 256Mi
         requests:
-          cpu: 55m
-          memory: 156Mi
+          cpu: 50m
+          memory: 128Mi
 
 secondary:
   affinity:
@@ -62,8 +62,8 @@ secondary:
           cpu: 100m
           memory: 256Mi
         requests:
-          cpu: 55m
-          memory: 156Mi
+          cpu: 50m
+          memory: 128Mi
 
 metrics:
   resources:

@@ -54,7 +54,8 @@ resource "helm_release" "mysqldb_backup" {
       azure_storage_account_key  = var.bucket_provider_type == "azure" ? var.azure_storage_account_key : ""
       azure_container_name       = var.bucket_provider_type == "azure" ? var.azure_container_name : ""
       annotations                = var.bucket_provider_type == "s3" ? "eks.amazonaws.com/role-arn: ${var.iam_role_arn_backup}" : "iam.gke.io/gcp-service-account: ${var.service_account_backup}"
-    })
+    }),
+    var.mysqldb_config.values_yaml
   ]
 }
 
@@ -78,6 +79,7 @@ resource "helm_release" "mysqldb_restore" {
       azure_storage_account_key  = var.bucket_provider_type == "azure" ? var.azure_storage_account_key : ""
       azure_container_name       = var.bucket_provider_type == "azure" ? var.azure_container_name : ""
       annotations                = var.bucket_provider_type == "s3" ? "eks.amazonaws.com/role-arn: ${var.iam_role_arn_restore}" : "iam.gke.io/gcp-service-account: ${var.service_account_restore}"
-    })
+    }),
+    var.mysqldb_config.values_yaml
   ]
 }
