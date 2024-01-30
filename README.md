@@ -113,6 +113,32 @@ module "mysql" {
 ## IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/saturnops/terraform-kubernetes-mysql/blob/main/IAM.md)
 
+## MySQL Backup and Restore
+This module provides functionality to automate the backup and restore process for MySQL databases using AWS S3 buckets. It allows users to easily schedule backups, restore databases from backups stored in S3, and manage access permissions using AWS IAM roles.
+Features
+### Backup
+- Users can schedule full backups.
+- upports specifying individual database names for backup or backing up all databases except system databases.
+- Backups are stored in specified S3 buckets.
+### Restore
+- Users can restore MySQL databases from backups stored in S3 buckets.
+- Supports specifying the backup file to restore from and the target S3 bucket region.
+### IAM Role for Permissions
+- Users need to provide an IAM role for the module to access the specified S3 bucket and perform backup and restore operations.
+## Module Inputs
+### Backup Configuration
+- command using to do backup:
+```
+mysqldump -h$HOST -u$USER -p$PASSWORD --databases db_name > full-backup.sql
+```
+- mysql_database_name: The name of the MySQL database to backup. Leave blank to backup all databases except system databases.
+- bucket_uri: The URI of the S3 bucket where backups will be stored.
+- s3_bucket_region: The region of the S3 bucket.
+- cron_for_full_backup: The cron expression for scheduling full backups.
+### Restore Configuration
+- mysqldb_restore_config: Configuration for restoring databases.bucket_uri: The URI of the S3 bucket containing the backup file.
+- file_name: The name of the backup file to restore.
+- s3_bucket_region: The region of the S3 bucket containing the backup file.
 ## Important Notes
   1. In order to enable the exporter, it is required to deploy Prometheus/Grafana first.
   2. The exporter is a tool that extracts metrics data from an application or system and makes it available to be scraped by Prometheus.

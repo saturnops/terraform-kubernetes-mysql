@@ -8,6 +8,28 @@ primary:
                       operator: In
                       values:
                       - "true"
+    resources:
+        limits:
+            cpu: 350m
+            memory: 1Gi
+        requests:
+            cpu: 200m
+            memory: 700Mi
+
+    sidecars:
+        - name: slow-log
+          image: busybox:1.28
+          args: [/bin/sh, -c, 'tail -n+1 -F /bitnami/mysql/slow-log.log']
+          volumeMounts:
+              - name: data
+                mountPath: /bitnami/mysql
+          resources:
+              limits:
+                cpu: 100m
+                memory: 256Mi
+              requests:
+                cpu: 50m
+                memory: 128Mi
 
 secondary:
     affinity:
@@ -20,29 +42,62 @@ secondary:
                       values:
                       - "true"
 
+    resources:
+        limits:
+            cpu: 350m
+            memory: 1Gi
+        requests:
+            cpu: 200m
+            memory: 700Mi
+
+    sidecars:
+        - name: slow-log
+          image: busybox:1.28
+          args: [/bin/sh, -c, 'tail -n+1 -F /bitnami/mysql/slow-log.log']
+          volumeMounts:
+              - name: data
+                mountPath: /bitnami/mysql
+          resources:
+              limits:
+                cpu: 100m
+                memory: 256Mi
+              requests:
+                cpu: 50m
+                memory: 128Mi
+
+metrics:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 500Mi
+    requests:
+      cpu: 10m
+      memory: 50Mi
+
+
 affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: "Infra-Services"
-            operator: In
-            values:
-            - "true"
+    nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+                - key: "Infra-Services"
+                  operator: In
+                  values:
+                  - "true"
 backupjob:
   resources:
     requests:
-      memory: 100Mi
-      cpu: 50m
-    limits:
-      memory: 200Mi
+      memory: 250Mi
       cpu: 100m
+    limits:
+      memory: 500Mi
+      cpu: 200m
 
 restorejob:
   resources:
     requests:
-      memory: 100Mi
-      cpu: 50m
-    limits:
-      memory: 200Mi
+      memory: 250Mi
       cpu: 100m
+    limits:
+      memory: 500Mi
+      cpu: 200m

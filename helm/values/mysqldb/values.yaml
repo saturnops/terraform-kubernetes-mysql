@@ -467,6 +467,17 @@ primary:
       volumeMounts:
       - name: data
         mountPath: /bitnami/mysql
+      resources:
+        ## Example:
+        ## limits:
+        ##    cpu: 100m
+        ##    memory: 256Mi
+        limits: {}
+        ## Examples:
+        ## requests:
+        ##    cpu: 100m
+        ##    memory: 256Mi
+        requests: {}
 
 
   ## MySQL Primary Service parameters
@@ -843,6 +854,17 @@ secondary:
       volumeMounts:
       - name: data
         mountPath: /bitnami/mysql
+      resources:
+        ## Example:
+        ## limits:
+        ##    cpu: 100m
+        ##    memory: 256Mi
+        limits: {}
+        ## Examples:
+        ## requests:
+        ##    cpu: 100m
+        ##    memory: 256Mi
+        requests: {}
   ## MySQL Secondary Service parameters
   ##
   service:
