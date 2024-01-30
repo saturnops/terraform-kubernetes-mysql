@@ -5,7 +5,8 @@ metadata:
 spec:
   template:
     spec:
-      affinity: {{ .Values.affinity | toYaml | nindent 6 }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
       serviceAccountName: sa-mysql-restore
       containers:
           - name: restore-mysqldb

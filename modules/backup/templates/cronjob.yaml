@@ -13,7 +13,8 @@ spec:
     spec:
       template:
         spec:
-          affinity: {{ .Values.affinity | toYaml | nindent 10 }}
+          affinity: 
+            {{- toYaml .Values.affinity | nindent 12 }}
           restartPolicy: OnFailure
           imagePullSecrets:
           - name: regcred

@@ -113,6 +113,15 @@ module "mysql" {
 ## IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/saturnops/terraform-kubernetes-mysql/blob/main/IAM.md)
 
+## Backup
+- In order to enable backup, it require database names like "db1, db2" or if it is blank it will backup all database without sys, information schema, performance schema and mysql.
+- command using to do backup:
+```
+mysqldump -h$HOST -u$USER -p$PASSWORD --databases db_name > full-backup.sql
+```
+## Restore
+- In order to enable backup, backup should be in .sql or .zip extention.
+
 ## Important Notes
   1. In order to enable the exporter, it is required to deploy Prometheus/Grafana first.
   2. The exporter is a tool that extracts metrics data from an application or system and makes it available to be scraped by Prometheus.
